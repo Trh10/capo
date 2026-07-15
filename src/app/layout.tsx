@@ -21,6 +21,8 @@ export const viewport = {
   maximumScale: 5,
 };
 
+export const dynamic = "force-dynamic";
+
 export default function RootLayout({
   children,
 }: Readonly<{

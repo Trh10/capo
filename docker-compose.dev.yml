@@ -1,0 +1,18 @@
+# PostgreSQL local pour le dev (optionnel)
+name: capo-dev
+
+services:
+  capo-db:
+    image: postgres:16-alpine
+    container_name: capo-dev-db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: capo
+      POSTGRES_PASSWORD: capo
+      POSTGRES_DB: capo
+    volumes:
+      - capo_dev_data:/var/lib/postgresql/data
+
+volumes:
+  capo_dev_data:

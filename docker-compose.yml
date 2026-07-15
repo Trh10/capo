@@ -1,0 +1,57 @@
+# Stack CAPO isolée — ne touche pas aux autres projets Coolify
+name: capo
+
+services:
+  capo-db:
+    image: postgres:16-alpine
+    container_name: capo-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: capo
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD required}
+      POSTGRES_DB: capo
+    volumes:
+      - capo_postgres_data:/var/lib/postgresql/data
+    networks:
+      - capo-internal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U capo -d capo"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  capo-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: capo-app
+    restart: unless-stopped
+    depends_on:
+      capo-db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://capo:${POSTGRES_PASSWORD}@capo-db:5432/capo
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET required}
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://51.255.200.11:3002}
+      NODE_ENV: production
+      SEED_DB: ${SEED_DB:-true}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-}
+      NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY:-}
+    volumes:
+      - capo_uploads:/app/public/uploads
+    ports:
+      - "${CAPO_PORT:-3002}:3000"
+    networks:
+      - capo-internal
+
+volumes:
+  capo_postgres_data:
+    name: capo_postgres_data
+  capo_uploads:
+    name: capo_uploads
+
+networks:
+  capo-internal:
+    name: capo-internal
+    driver: bridge

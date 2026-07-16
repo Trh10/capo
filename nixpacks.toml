@@ -5,7 +5,7 @@ NIXPACKS_NODE_VERSION = "20"
 nixPkgs = ["nodejs_20", "openssl"]
 
 [phases.install]
-cmds = ["npm ci --ignore-scripts"]
+cmds = ["npm install --ignore-scripts"]
 
 [phases.build]
 cmds = ["npx prisma generate", "npm run build"]

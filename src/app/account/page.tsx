@@ -8,6 +8,13 @@ import { DeviceList } from "@/components/account/DeviceList";
 import { LogoutButton } from "@/components/account/LogoutButton";
 import { ProfileForm } from "@/components/account/ProfileForm";
 
+type PurchasedCourse = {
+  slug: string;
+  title: string;
+  thumbnailUrl: string | null;
+  lessons: { id: string }[];
+};
+
 export default async function AccountPage() {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
@@ -82,7 +89,7 @@ export default async function AccountPage() {
           </p>
         ) : (
           <div className="mt-4 space-y-3">
-            {purchases.map(({ course }) => (
+            {purchases.map(({ course }: { course: PurchasedCourse }) => (
               <Link
                 key={course.slug}
                 href={`/watch/${course.slug}`}
@@ -117,7 +124,7 @@ export default async function AccountPage() {
         </h2>
         <div className="mt-4">
           <DeviceList
-            devices={devices.map((d) => ({
+            devices={devices.map((d: (typeof devices)[number]) => ({
               id: d.id,
               name: d.name,
               type: d.type,

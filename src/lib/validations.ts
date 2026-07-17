@@ -78,7 +78,13 @@ export const createCourseSchema = z.object({
     .optional(),
   description: z.string().min(20, "Description requise (min. 20 caractères)"),
   shortDesc: z.string().max(200).optional(),
-  thumbnailUrl: z.union([z.string().url("URL invalide"), z.literal("")]).optional(),
+  thumbnailUrl: z
+    .union([
+      z.string().url("URL invalide"),
+      z.string().regex(/^\/uploads\/.+/, "Chemin de fichier invalide"),
+      z.literal(""),
+    ])
+    .optional(),
   price: z.number().min(0, "Prix invalide"),
   level: z.string().min(2, "Niveau requis"),
   categoryName: z.string().optional(),

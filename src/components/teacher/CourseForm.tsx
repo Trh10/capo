@@ -43,7 +43,13 @@ export function CourseForm({
     setLoading(true);
 
     const formData = new FormData(e.currentTarget);
-    const priceDisplay = Number(formData.get("priceDisplay"));
+    const priceRaw = formData.get("priceDisplay")?.toString().replace(",", ".") ?? "0";
+    const priceDisplay = Number(priceRaw);
+    if (!Number.isFinite(priceDisplay) || priceDisplay < 0) {
+      setError("Prix invalide");
+      setLoading(false);
+      return;
+    }
     const payload = {
       title,
       slug: mode === "edit" && initial?.slug ? initial.slug : slugify(title),

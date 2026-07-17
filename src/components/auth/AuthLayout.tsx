@@ -10,28 +10,28 @@ interface AuthLayoutProps {
 export function AuthLayout({ title, subtitle, children }: AuthLayoutProps) {
   return (
     <div className="flex min-h-[calc(100vh-4rem)] bg-background">
-      <div className="relative hidden w-1/2 overflow-hidden bg-gradient-to-br from-primary/5 via-background to-secondary/5 lg:flex lg:flex-col lg:justify-between lg:p-12">
+      <div className="relative hidden w-1/2 overflow-hidden bg-neutral-950 lg:flex lg:flex-col lg:justify-between lg:p-12">
         <div className="relative">
-          <Logo variant="primary" className="h-10" />
+          <Logo variant="onDark" className="h-10" />
         </div>
 
         <div className="relative">
-          <blockquote className="text-3xl font-bold leading-tight text-foreground">
+          <blockquote className="text-3xl font-bold leading-tight text-white">
             &ldquo;Chaque cours est une porte ouverte sur un nouveau savoir-faire.&rdquo;
           </blockquote>
-          <p className="mt-6 text-muted">
+          <p className="mt-6 text-neutral-400">
             Rejoignez une communauté de créatifs passionnés.
           </p>
         </div>
 
         <div className="relative flex gap-8">
           <div>
-            <p className="text-2xl font-bold text-foreground">+50</p>
-            <p className="text-sm text-muted">Cours</p>
+            <p className="text-2xl font-bold text-white">+50</p>
+            <p className="text-sm text-neutral-400">Cours</p>
           </div>
           <div>
-            <p className="text-2xl font-bold text-foreground">+20</p>
-            <p className="text-sm text-muted">Professeurs</p>
+            <p className="text-2xl font-bold text-white">+20</p>
+            <p className="text-sm text-neutral-400">Professeurs</p>
           </div>
         </div>
       </div>

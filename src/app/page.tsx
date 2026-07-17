@@ -2,6 +2,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { CourseCard } from "@/components/courses/CourseCard";
 import { HeroSearch } from "@/components/home/HeroSearch";
+import { Logo } from "@/components/brand/Logo";
 
 export default async function HomePage() {
   const [courses, categories, stats] = await Promise.all([
@@ -33,6 +34,9 @@ export default async function HomePage() {
     <>
       <section className="relative overflow-hidden bg-gradient-to-br from-primary/5 via-background to-secondary/5">
         <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-32">
+          <div className="mb-8 inline-flex rounded-2xl bg-primary p-4 shadow-lg shadow-primary/20">
+            <Logo variant="red" href={null} className="h-10 sm:h-11" />
+          </div>
           <p className="text-sm font-semibold uppercase tracking-widest text-primary">
             Cours créatifs en ligne
           </p>
@@ -173,18 +177,23 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-20 text-center sm:px-6">
-        <h2 className="text-3xl font-bold">Prêt à créer ?</h2>
-        <p className="mx-auto mt-4 max-w-lg text-muted">
-          Rejoignez CAPO et accédez à des centaines de cours créatifs guidés
-          par des passionnés.
-        </p>
-        <Link
-          href="/register"
-          className="mt-8 inline-block rounded-full bg-primary px-10 py-3.5 text-sm font-semibold text-white transition hover:bg-primary-dark"
-        >
-          Commencer maintenant
-        </Link>
+      <section className="bg-primary">
+        <div className="mx-auto max-w-7xl px-4 py-20 text-center sm:px-6">
+          <div className="mx-auto mb-8 inline-flex">
+            <Logo variant="onDark" href={null} className="h-11" />
+          </div>
+          <h2 className="text-3xl font-bold text-white">Prêt à créer ?</h2>
+          <p className="mx-auto mt-4 max-w-lg text-white/85">
+            Rejoignez CAPO Studio et accédez à des centaines de cours créatifs
+            guidés par des passionnés.
+          </p>
+          <Link
+            href="/register"
+            className="mt-8 inline-block rounded-full bg-white px-10 py-3.5 text-sm font-semibold text-primary transition hover:bg-white/90"
+          >
+            Commencer maintenant
+          </Link>
+        </div>
       </section>
     </>
   );

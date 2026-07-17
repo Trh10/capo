@@ -1,2 +1,3 @@
 *.sh text eol=lf
 docker-entrypoint.sh text eol=lf
+scripts/start-production.sh text eol=lf

@@ -11,4 +11,4 @@ cmds = ["npm install --ignore-scripts"]
 cmds = ["npx prisma generate", "npm run build"]
 
 [start]
-cmd = "npx prisma db push --skip-generate && HOSTNAME=0.0.0.0 PORT=3000 node .next/standalone/server.js"
+cmd = "sh scripts/start-production.sh"

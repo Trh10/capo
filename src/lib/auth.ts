@@ -9,7 +9,7 @@ const JWT_SECRET = new TextEncoder().encode(
 const COOKIE_NAME = "capo_session";
 const MAX_AGE = 60 * 60 * 24 * 7; // 7 jours
 
-function useSecureCookies(): boolean {
+function shouldUseSecureCookies(): boolean {
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "";
   if (appUrl.startsWith("https://")) return true;
   if (appUrl.startsWith("http://")) return false;
@@ -32,7 +32,7 @@ export async function createSession(payload: SessionPayload) {
   const cookieStore = await cookies();
   cookieStore.set(COOKIE_NAME, token, {
     httpOnly: true,
-    secure: useSecureCookies(),
+    secure: shouldUseSecureCookies(),
     sameSite: "lax",
     maxAge: MAX_AGE,
     path: "/",

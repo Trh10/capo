@@ -9,6 +9,7 @@ import {
   MAX_THUMBNAIL_BYTES,
   isAllowedThumbnail,
 } from "@/lib/upload-config";
+import { getPublicUploadsDir } from "@/lib/uploads-dir";
 
 export const runtime = "nodejs";
 
@@ -37,7 +38,7 @@ export async function POST(request: NextRequest) {
 
     const ext = path.extname(file.name) || ".jpg";
     const filename = `avatar-${randomUUID()}${ext}`;
-    const uploadsDir = path.join(process.cwd(), "public", "uploads");
+    const uploadsDir = getPublicUploadsDir();
     await mkdir(uploadsDir, { recursive: true });
 
     const destination = path.join(uploadsDir, filename);

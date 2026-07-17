@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import Link from "next/link";
+import { Logo } from "@/components/brand/Logo";
 
 interface AuthLayoutProps {
   title: string;
@@ -12,9 +12,7 @@ export function AuthLayout({ title, subtitle, children }: AuthLayoutProps) {
     <div className="flex min-h-[calc(100vh-4rem)] bg-background">
       <div className="relative hidden w-1/2 overflow-hidden bg-gradient-to-br from-primary/5 via-background to-secondary/5 lg:flex lg:flex-col lg:justify-between lg:p-12">
         <div className="relative">
-          <Link href="/" className="text-3xl font-bold text-primary">
-            CAPO
-          </Link>
+          <Logo variant="primary" className="h-10" />
         </div>
 
         <div className="relative">
@@ -40,9 +38,7 @@ export function AuthLayout({ title, subtitle, children }: AuthLayoutProps) {
 
       <div className="flex w-full items-center justify-center bg-card px-4 py-12 lg:w-1/2">
         <div className="w-full max-w-md">
-          <Link href="/" className="text-2xl font-bold text-primary lg:hidden">
-            CAPO
-          </Link>
+          <Logo variant="primary" className="h-9" />
           <h1 className="mt-6 text-2xl font-bold lg:mt-0">{title}</h1>
           <p className="mt-2 text-sm text-muted">{subtitle}</p>
           <div className="mt-8">{children}</div>

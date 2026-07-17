@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getCurrentUser } from "@/lib/auth";
+import { Logo } from "@/components/brand/Logo";
 import { MobileMenu } from "./MobileMenu";
 import { HeaderLogoutButton } from "./HeaderLogoutButton";
 
@@ -9,9 +10,7 @@ export async function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-card/80 backdrop-blur-md">
       <div className="relative mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
-        <Link href="/" className="text-2xl font-bold tracking-tight text-primary">
-          CAPO
-        </Link>
+        <Logo priority />
 
         <nav className="hidden items-center gap-8 md:flex">
           <Link

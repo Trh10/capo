@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Calque_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 595.28 205.28">
+  <!-- Generator: Adobe Illustrator 29.0.1, SVG Export Plug-In . SVG Version: 2.1.0 Build 192)  -->
+  <defs>
+    <style>
+      .st0 {
+        font-family: AmatryRegular, Amatry;
+        font-size: 119.95px;
+      }
+
+      .st0, .st1 {
+        fill: #fff;
+      }
+
+      .st2 {
+        font-family: GCRotaPro-Regular, 'GC Rota Pro';
+        font-size: 42.78px;
+      }
+
+      .st2, .st3 {
+        fill: #d72929;
+      }
+    </style>
+  </defs>
+  <rect class="st3" x="-10" y="-17.93" width="615.28" height="241.14"/>
+  <g>
+    <path class="st1" d="M471.96,147.5c-2.26,0-4.52-.59-6.54-1.76l-24.76-14.42c-4.44-2.59-9.5-3.95-14.64-3.95h-15.47c-7.16,0-12.99-5.83-12.99-12.99v-43.61c0-7.16,5.83-12.99,12.99-12.99h122.66c7.16,0,12.99,5.83,12.99,12.99v43.61c0,7.16-5.83,12.99-12.99,12.99h-14.71c-5.03,0-10,1.31-14.37,3.8l-25.77,14.64c-1.98,1.13-4.2,1.69-6.42,1.69Z"/>
+    <text class="st0" transform="translate(49.06 144.75)"><tspan x="0" y="0">CAPO</tspan></text>
+    <text class="st2" transform="translate(412.74 108.04)"><tspan x="0" y="0">Studio</tspan></text>
+  </g>
+</svg>

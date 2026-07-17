@@ -52,8 +52,14 @@ export function VideoThumbnail({
           sizes={aspect === "video" ? "(max-width: 768px) 100vw, 66vw" : "(max-width: 768px) 100vw, 33vw"}
         />
       ) : (
-        <div className="flex h-full items-center justify-center text-4xl text-muted/30">
-          CAPO
+        <div className="flex h-full items-center justify-center p-6">
+          <Image
+            src="/branding/logo-capo-icon.png"
+            alt="CAPO Studio"
+            width={72}
+            height={72}
+            className="opacity-40"
+          />
         </div>
       )}
 

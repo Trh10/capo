@@ -10,9 +10,13 @@ const geistSans = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "CAPO — Cours créatifs en ligne",
+  title: "CAPO Studio — Cours créatifs en ligne",
   description:
     "Apprenez illustration, artisanat, design et plus encore auprès de professionnels passionnés. Cours guidés, accès illimité.",
+  icons: {
+    icon: "/favicon.png",
+    apple: "/apple-touch-icon.png",
+  },
 };
 
 export const viewport = {

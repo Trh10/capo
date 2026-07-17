@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Logo } from "@/components/brand/Logo";
 
 export function Footer() {
   return (
@@ -6,7 +7,7 @@ export function Footer() {
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
         <div className="grid gap-8 md:grid-cols-4">
           <div>
-            <p className="text-xl font-bold text-primary">CAPO</p>
+            <Logo href="/" className="h-10" />
             <p className="mt-2 text-sm text-muted">
               La plateforme de cours créatifs et d&apos;artisanat pour apprendre, créer et progresser.
             </p>
@@ -54,7 +55,7 @@ export function Footer() {
           </div>
         </div>
         <div className="mt-8 border-t border-border pt-8 text-center text-sm text-muted">
-          &copy; {new Date().getFullYear()} CAPO. Tous droits réservés.
+          &copy; {new Date().getFullYear()} CAPO Studio. Tous droits réservés.
         </div>
       </div>
     </footer>

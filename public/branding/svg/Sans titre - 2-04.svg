@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Calque_1" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 595.28 205.28">
+  <!-- Generator: Adobe Illustrator 29.0.1, SVG Export Plug-In . SVG Version: 2.1.0 Build 192)  -->
+  <defs>
+    <style>
+      .st0 {
+        fill: #031219;
+        font-family: AmatryRegular, Amatry;
+        font-size: 119.95px;
+      }
+
+      .st1 {
+        fill: url(#Dégradé_sans_nom_11);
+      }
+
+      .st2, .st3 {
+        fill: #fff;
+      }
+
+      .st3 {
+        font-family: GCRotaPro-Regular, 'GC Rota Pro';
+        font-size: 42.78px;
+      }
+    </style>
+    <linearGradient id="Dégradé_sans_nom_11" data-name="Dégradé sans nom 11" x1="373.58" y1="52.36" x2="600.34" y2="163.88" gradientUnits="userSpaceOnUse">
+      <stop offset=".21" stop-color="#d72929"/>
+      <stop offset="1" stop-color="#76227b"/>
+    </linearGradient>
+  </defs>
+  <rect class="st2" x="-44.28" y="-35.42" width="675.56" height="276.11"/>
+  <g>
+    <path class="st1" d="M471.96,155.63c-2.26,0-4.52-.59-6.54-1.76l-24.76-14.42c-4.44-2.59-9.5-3.95-14.64-3.95h-15.47c-7.16,0-12.99-5.83-12.99-12.99v-43.61c0-7.16,5.83-12.99,12.99-12.99h122.66c7.16,0,12.99,5.83,12.99,12.99v43.61c0,7.16-5.83,12.99-12.99,12.99h-14.71c-5.03,0-10,1.31-14.37,3.8l-25.77,14.64c-1.98,1.13-4.2,1.69-6.42,1.69Z"/>
+    <text class="st0" transform="translate(49.06 152.89)"><tspan x="0" y="0">CAPO</tspan></text>
+    <text class="st3" transform="translate(412.74 116.19)"><tspan x="0" y="0">Studio</tspan></text>
+  </g>
+</svg>

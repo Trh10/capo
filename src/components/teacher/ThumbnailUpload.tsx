@@ -39,7 +39,9 @@ export function ThumbnailUpload({ value, onChange }: ThumbnailUploadProps) {
         }
       };
 
-      xhr.onerror = () => reject(new Error("Erreur réseau"));
+      xhr.onerror = () => reject(new Error("Erreur réseau lors de l'upload"));
+      xhr.timeout = 0;
+      xhr.withCredentials = true;
       xhr.open("POST", "/api/teacher/upload");
       xhr.send(formData);
     });

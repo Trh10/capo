@@ -41,7 +41,13 @@ export function AvatarUpload({ value, onChange, size = "md" }: AvatarUploadProps
         }
       };
 
-      xhr.onerror = () => reject(new Error("Erreur réseau"));
+      xhr.onerror = () =>
+        reject(new Error("Erreur réseau — vérifiez votre connexion"));
+      xhr.onabort = () => reject(new Error("Upload annulé"));
+      xhr.ontimeout = () =>
+        reject(new Error("Upload trop long — réessayez ou réduisez le fichier"));
+      xhr.timeout = 0;
+      xhr.withCredentials = true;
       xhr.open("POST", "/api/upload/avatar");
       xhr.send(formData);
     });

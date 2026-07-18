@@ -51,9 +51,17 @@ export function ContentFileUpload({
         }
       };
 
-      xhr.onerror = () => reject(new Error("Erreur réseau"));
+      xhr.onerror = () =>
+        reject(
+          new Error(
+            "Upload interrompu — fichier trop volumineux ou connexion coupée. Essayez un fichier plus petit ou le Wi‑Fi."
+          )
+        );
       xhr.onabort = () => reject(new Error("Upload annulé"));
-
+      xhr.ontimeout = () =>
+        reject(new Error("Upload trop long — réessayez avec une meilleure connexion"));
+      xhr.timeout = 0;
+      xhr.withCredentials = true;
       xhr.open("POST", "/api/teacher/upload");
       xhr.send(formData);
     });

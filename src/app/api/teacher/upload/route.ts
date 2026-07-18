@@ -17,6 +17,7 @@ import { getPublicUploadsDir } from "@/lib/uploads-dir";
 
 export const runtime = "nodejs";
 export const maxDuration = 600;
+export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
   const context = await getTeacherContext();

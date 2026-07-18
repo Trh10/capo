@@ -12,6 +12,8 @@ import {
 import { getPublicUploadsDir } from "@/lib/uploads-dir";
 
 export const runtime = "nodejs";
+export const maxDuration = 600;
+export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
   try {
@@ -49,7 +51,8 @@ export async function POST(request: NextRequest) {
     await pipeline(nodeStream, createWriteStream(destination));
 
     return NextResponse.json({ url: `/uploads/${filename}` });
-  } catch {
+  } catch (error) {
+    console.error("Avatar upload error:", error);
     return NextResponse.json(
       { error: "Erreur lors de l'upload de la photo" },
       { status: 500 }

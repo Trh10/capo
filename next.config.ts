@@ -5,6 +5,14 @@ const nextConfig: NextConfig = {
   output: "standalone",
   // Force Next.js à utiliser CAPO comme racine (évite de prendre C:\Users\terac\)
   outputFileTracingRoot: path.join(__dirname),
+  async rewrites() {
+    return [
+      {
+        source: "/uploads/:filename",
+        destination: "/api/media/:filename",
+      },
+    ];
+  },
   experimental: {
     serverActions: {
       bodySizeLimit: "5gb",

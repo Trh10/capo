@@ -1,16 +1,18 @@
 import { existsSync } from "fs";
 import path from "path";
 
-/** Dossier public/uploads servi par Next.js (standalone ou dev). */
+/** Dossier où les fichiers uploadés sont stockés et servis. */
 export function getPublicUploadsDir(): string {
+  if (process.env.UPLOADS_DIR?.trim()) {
+    return process.env.UPLOADS_DIR.trim();
+  }
+
   const cwd = process.cwd();
 
-  // Serveur standalone : cwd = .next/standalone
   if (existsSync(path.join(cwd, "server.js"))) {
     return path.join(cwd, "public", "uploads");
   }
 
-  // Prod lancée depuis la racine du projet
   const standaloneUploads = path.join(
     cwd,
     ".next",

@@ -12,21 +12,14 @@ const iconDst = join(mobileRoot, "www", "icon.png");
 if (existsSync(iconSrc)) {
   copyFileSync(iconSrc, iconDst);
   console.log("Icône copiée vers mobile/www/icon.png");
-} else {
+} else if (!existsSync(iconDst)) {
   console.warn("Icône introuvable:", iconSrc);
 }
 
 const manifestPath = join(mobileRoot, "android", "app", "src", "main", "AndroidManifest.xml");
-if (existsSync(manifestPath)) {
-  let xml = readFileSync(manifestPath, "utf8");
-  if (!xml.includes("usesCleartextTraffic")) {
-    xml = xml.replace(
-      "<application",
-      '<application android:usesCleartextTraffic="true"'
-    );
-    writeFileSync(manifestPath, xml);
-    console.log("AndroidManifest: cleartext HTTP activé");
-  }
+if (!existsSync(manifestPath)) {
+  console.log("AndroidManifest absent — exécutez d'abord: npx cap add android");
+  process.exit(0);
 }
 
 const networkConfigDir = join(
@@ -38,12 +31,10 @@ const networkConfigDir = join(
   "res",
   "xml"
 );
-const networkConfigPath = join(networkConfigDir, "network_security_config.xml");
-if (existsSync(join(mobileRoot, "android"))) {
-  mkdirSync(networkConfigDir, { recursive: true });
-  writeFileSync(
-    networkConfigPath,
-    `<?xml version="1.0" encoding="utf-8"?>
+mkdirSync(networkConfigDir, { recursive: true });
+writeFileSync(
+  join(networkConfigDir, "network_security_config.xml"),
+  `<?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
   <domain-config cleartextTrafficPermitted="true">
     <domain includeSubdomains="true">51.255.200.11.sslip.io</domain>
@@ -52,17 +43,21 @@ if (existsSync(join(mobileRoot, "android"))) {
   </domain-config>
 </network-security-config>
 `
+);
+
+let xml = readFileSync(manifestPath, "utf8");
+if (!xml.includes('networkSecurityConfig="@xml/network_security_config"')) {
+  xml = xml.replace(
+    "<application",
+    '<application android:networkSecurityConfig="@xml/network_security_config"'
   );
-
-  let xml = readFileSync(manifestPath, "utf8");
-  if (!xml.includes("networkSecurityConfig")) {
-    xml = xml.replace(
-      "<application",
-      '<application android:networkSecurityConfig="@xml/network_security_config"'
-    );
-    writeFileSync(manifestPath, xml);
-    console.log("AndroidManifest: network security config ajouté");
-  }
 }
-
+if (!xml.includes("usesCleartextTraffic")) {
+  xml = xml.replace(
+    "<application",
+    '<application android:usesCleartextTraffic="true"'
+  );
+}
+writeFileSync(manifestPath, xml);
+console.log("AndroidManifest: HTTP cleartext + network config OK");
 console.log("Préparation mobile terminée.");

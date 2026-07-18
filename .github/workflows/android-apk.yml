@@ -1,0 +1,78 @@
+name: Build Android APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "mobile/**"
+      - ".github/workflows/android-apk.yml"
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Add Android platform
+        run: npx cap add android
+
+      - name: Patch Android config
+        run: node scripts/prepare.mjs
+
+      - name: Sync Capacitor
+        run: npx cap sync android
+
+      - name: Generate launcher icons
+        run: |
+          mkdir -p android/app/src/main/res/mipmap-xxxhdpi
+          cp www/icon.png android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+          cp www/icon.png android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png
+          for dir in mdpi hdpi xhdpi xxhdpi; do
+            mkdir -p android/app/src/main/res/mipmap-$dir
+            cp www/icon.png android/app/src/main/res/mipmap-$dir/ic_launcher.png
+            cp www/icon.png android/app/src/main/res/mipmap-$dir/ic_launcher_round.png
+          done
+
+      - name: Build debug APK
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: capo-studio-debug-apk
+          path: mobile/android/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 30
+
+      - name: Summary
+        run: |
+          echo "### APK CAPO Studio prêt" >> $GITHUB_STEP_SUMMARY
+          echo "Téléchargez **capo-studio-debug-apk** dans les artifacts de ce workflow." >> $GITHUB_STEP_SUMMARY
+          echo "URL prod : http://t13kzxjdw7jzvip57w31g0oq.51.255.200.11.sslip.io" >> $GITHUB_STEP_SUMMARY

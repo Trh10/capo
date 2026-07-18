@@ -1,0 +1,20 @@
+{
+  "name": "capo-mobile",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Coque Android CAPO Studio — charge le site en production",
+  "scripts": {
+    "prepare": "node scripts/prepare.mjs",
+    "sync": "npm run prepare && npx cap sync android",
+    "open:android": "npx cap open android",
+    "build:apk": "npm run sync && cd android && gradlew.bat assembleDebug"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.4.2",
+    "@capacitor/core": "^8.4.2"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.4.2",
+    "typescript": "^5.8.2"
+  }
+}

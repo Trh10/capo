@@ -30,9 +30,9 @@ COPY --from=builder /app/node_modules/bcryptjs ./node_modules/bcryptjs
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
-
-RUN mkdir -p public/uploads
+COPY --from=builder /app/scripts/start-production.sh ./scripts/start-production.sh
+RUN chmod +x ./scripts/start-production.sh
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "node node_modules/prisma/build/index.js db push --skip-generate && node server.js"]
+CMD ["sh", "scripts/start-production.sh"]

@@ -55,7 +55,7 @@ export function CourseForm({
       slug: mode === "edit" && initial?.slug ? initial.slug : slugify(title),
       description: formData.get("description")?.toString() ?? "",
       shortDesc: formData.get("shortDesc")?.toString() ?? "",
-      thumbnailUrl,
+      thumbnailUrl: thumbnailUrl ? thumbnailUrl.split("?")[0] : "",
       price: Math.round(priceDisplay * 100),
       level: formData.get("level")?.toString() ?? "Débutant",
       categoryName: formData.get("categoryName")?.toString() ?? "",

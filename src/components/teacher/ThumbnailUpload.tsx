@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { withUploadCacheBust } from "@/lib/media-url";
 
 interface ThumbnailUploadProps {
   value?: string | null;
@@ -12,6 +13,7 @@ export function ThumbnailUpload({ value, onChange }: ThumbnailUploadProps) {
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState("");
+  const [previewBroken, setPreviewBroken] = useState(false);
 
   function upload(file: File): Promise<{ url: string }> {
     return new Promise((resolve, reject) => {
@@ -54,7 +56,8 @@ export function ThumbnailUpload({ value, onChange }: ThumbnailUploadProps) {
 
     try {
       const data = await upload(file);
-      onChange(data.url);
+      setPreviewBroken(false);
+      onChange(withUploadCacheBust(data.url));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Upload échoué");
     } finally {
@@ -65,13 +68,14 @@ export function ThumbnailUpload({ value, onChange }: ThumbnailUploadProps) {
 
   return (
     <div className="space-y-3">
-      {value && (
+      {value && !previewBroken && (
         <div className="relative h-40 w-full max-w-xs overflow-hidden rounded-xl border border-border">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={value}
             alt="Miniature du cours"
             className="h-full w-full object-cover"
+            onError={() => setPreviewBroken(true)}
           />
         </div>
       )}
@@ -95,7 +99,7 @@ export function ThumbnailUpload({ value, onChange }: ThumbnailUploadProps) {
       >
         {uploading
           ? `Upload miniature ${progress}%`
-          : value
+          : value && !previewBroken
             ? "Changer la miniature"
             : "Uploader la miniature"}
       </button>

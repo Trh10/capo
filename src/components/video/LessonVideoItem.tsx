@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Image from "next/image";
+import { MediaImage } from "@/components/media/MediaImage";
 
 interface LessonVideoItemProps {
   index: number;
@@ -28,7 +28,7 @@ export function LessonVideoItem({
     <div className="flex gap-3 rounded-xl border border-border bg-card p-3 transition hover:border-primary/30 hover:shadow-sm sm:gap-4 sm:p-4">
       <div className="relative h-16 w-24 shrink-0 overflow-hidden rounded-lg bg-gradient-to-br from-secondary/20 to-accent/20 sm:h-20 sm:w-32">
         {thumbnailUrl && (
-          <Image
+          <MediaImage
             src={thumbnailUrl}
             alt={title}
             fill

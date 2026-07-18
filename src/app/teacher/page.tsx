@@ -1,8 +1,8 @@
 import Link from "next/link";
-import Image from "next/image";
 import { prisma } from "@/lib/prisma";
 import { requireTeacher } from "@/lib/teacher";
 import { formatPrice } from "@/lib/format";
+import { MediaImage } from "@/components/media/MediaImage";
 
 export default async function TeacherDashboardPage() {
   const { user, teacher } = await requireTeacher();
@@ -89,7 +89,7 @@ export default async function TeacherDashboardPage() {
             >
               <div className="relative h-16 w-24 shrink-0 overflow-hidden rounded-lg bg-secondary/10">
                 {course.thumbnailUrl && (
-                  <Image
+                  <MediaImage
                     src={course.thumbnailUrl}
                     alt={course.title}
                     fill

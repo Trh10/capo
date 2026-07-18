@@ -1,9 +1,9 @@
 import Link from "next/link";
-import Image from "next/image";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { getUserDevices } from "@/lib/devices";
 import { prisma } from "@/lib/prisma";
+import { MediaImage } from "@/components/media/MediaImage";
 import { DeviceList } from "@/components/account/DeviceList";
 import { LogoutButton } from "@/components/account/LogoutButton";
 import { ProfileForm } from "@/components/account/ProfileForm";
@@ -97,7 +97,7 @@ export default async function AccountPage() {
               >
                 <div className="relative h-14 w-20 shrink-0 overflow-hidden rounded-lg bg-secondary/10">
                   {course.thumbnailUrl && (
-                    <Image
+                    <MediaImage
                       src={course.thumbnailUrl}
                       alt={course.title}
                       fill

@@ -37,7 +37,7 @@ export function ProfileForm({ initial }: ProfileFormProps) {
     const payload = {
       firstName: formData.get("firstName")?.toString() ?? "",
       lastName: formData.get("lastName")?.toString() ?? "",
-      avatarUrl,
+      avatarUrl: avatarUrl ? avatarUrl.split("?")[0] : "",
       ...(initial.role === "TEACHER" && {
         bio: formData.get("bio")?.toString() ?? "",
         specialty: formData.get("specialty")?.toString() ?? "",

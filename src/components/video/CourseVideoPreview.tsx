@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
+import { MediaImage } from "@/components/media/MediaImage";
 import { VideoPlayer } from "./VideoPlayer";
 
 interface CourseVideoPreviewProps {
@@ -44,7 +44,7 @@ export function CourseVideoPreview({
     >
       <div className="relative aspect-video bg-gradient-to-br from-secondary/20 to-accent/20">
         {thumbnailUrl && (
-          <Image
+          <MediaImage
             src={thumbnailUrl}
             alt={title}
             fill

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { MediaImage } from "@/components/media/MediaImage";
 
 function PlayIcon({ className }: { className?: string }) {
   return (
@@ -44,7 +45,7 @@ export function VideoThumbnail({
       role={onClick ? "button" : undefined}
     >
       {src ? (
-        <Image
+        <MediaImage
           src={src}
           alt={alt}
           fill

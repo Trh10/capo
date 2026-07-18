@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { withUploadCacheBust } from "@/lib/media-url";
 
 interface AvatarUploadProps {
   value?: string | null;
@@ -13,6 +14,7 @@ export function AvatarUpload({ value, onChange, size = "md" }: AvatarUploadProps
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState("");
+  const [previewBroken, setPreviewBroken] = useState(false);
 
   const sizeClass = size === "sm" ? "h-20 w-20" : "h-28 w-28";
 
@@ -60,7 +62,8 @@ export function AvatarUpload({ value, onChange, size = "md" }: AvatarUploadProps
 
     try {
       const data = await upload(file);
-      onChange(data.url);
+      setPreviewBroken(false);
+      onChange(withUploadCacheBust(data.url));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Upload échoué");
     } finally {
@@ -74,9 +77,14 @@ export function AvatarUpload({ value, onChange, size = "md" }: AvatarUploadProps
       <div
         className={`relative ${sizeClass} shrink-0 overflow-hidden rounded-full border-2 border-border bg-secondary/10`}
       >
-        {value ? (
+        {value && !previewBroken ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={value} alt="Photo de profil" className="h-full w-full object-cover" />
+          <img
+            src={value}
+            alt="Photo de profil"
+            className="h-full w-full object-cover"
+            onError={() => setPreviewBroken(true)}
+          />
         ) : (
           <div className="flex h-full w-full items-center justify-center text-2xl text-muted">
             ?
@@ -108,7 +116,7 @@ export function AvatarUpload({ value, onChange, size = "md" }: AvatarUploadProps
         >
           {uploading
             ? "Upload..."
-            : value
+            : value && !previewBroken
               ? "Changer la photo"
               : "Ajouter une photo"}
         </button>

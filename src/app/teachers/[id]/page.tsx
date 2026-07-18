@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
-import Image from "next/image";
 import { prisma } from "@/lib/prisma";
+import { MediaImage } from "@/components/media/MediaImage";
 import { CourseCard } from "@/components/courses/CourseCard";
 
 interface TeacherPageProps {
@@ -37,7 +37,7 @@ export default async function TeacherDetailPage({ params }: TeacherPageProps) {
       <div className="flex items-start gap-6">
         {teacher.user.avatarUrl ? (
           <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-full">
-            <Image
+            <MediaImage
               src={teacher.user.avatarUrl}
               alt={`${teacher.user.firstName} ${teacher.user.lastName}`}
               fill

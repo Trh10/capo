@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Image from "next/image";
+import { MediaImage } from "@/components/media/MediaImage";
 import { prisma } from "@/lib/prisma";
 
 export default async function TeachersPage() {
@@ -35,7 +35,7 @@ export default async function TeachersPage() {
             >
               {teacher.user.avatarUrl ? (
                 <div className="relative h-16 w-16 overflow-hidden rounded-full">
-                  <Image
+                  <MediaImage
                     src={teacher.user.avatarUrl}
                     alt={`${teacher.user.firstName} ${teacher.user.lastName}`}
                     fill

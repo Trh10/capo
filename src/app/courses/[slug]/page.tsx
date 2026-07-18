@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import { prisma } from "@/lib/prisma";
+import { MediaImage } from "@/components/media/MediaImage";
 import { getCurrentUser } from "@/lib/auth";
 import { formatPrice } from "@/lib/format";
 import {
@@ -156,7 +156,7 @@ export default async function CourseDetailPage({
             >
               {course.teacher.user.avatarUrl ? (
                 <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full">
-                  <Image
+                  <MediaImage
                     src={course.teacher.user.avatarUrl}
                     alt={`${course.teacher.user.firstName} ${course.teacher.user.lastName}`}
                     fill

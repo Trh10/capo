@@ -1,8 +1,8 @@
 import Link from "next/link";
-import Image from "next/image";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { MediaImage } from "@/components/media/MediaImage";
 
 export default async function MyCoursesPage() {
   const user = await getCurrentUser();
@@ -48,7 +48,7 @@ export default async function MyCoursesPage() {
             >
               <div className="relative h-16 w-24 shrink-0 overflow-hidden rounded-lg bg-secondary/10">
                 {course.thumbnailUrl && (
-                  <Image
+                  <MediaImage
                     src={course.thumbnailUrl}
                     alt={course.title}
                     fill

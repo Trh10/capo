@@ -30,7 +30,7 @@ const LOGOS: Record<
     src: "/branding/logo-capo-icon.png",
     width: 40,
     height: 40,
-    className: "rounded-xl",
+    className: "",
   },
 };
 

@@ -36,8 +36,13 @@ export default async function CoursesPage({ searchParams }: CoursesPageProps) {
   ]);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
-      <h1 className="text-3xl font-bold">Tous les cours</h1>
+    <div className="border-b-2 border-border px-4 py-12 sm:px-10">
+      <p className="text-xs font-semibold uppercase tracking-[.14em] text-primary-deep">
+        Catalogue
+      </p>
+      <h1 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">
+        Tous les cours
+      </h1>
       <p className="mt-2 text-muted">
         {courses.length} cours disponible{courses.length > 1 ? "s" : ""}
       </p>
@@ -49,7 +54,7 @@ export default async function CoursesPage({ searchParams }: CoursesPageProps) {
       />
 
       {courses.length > 0 ? (
-        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-10 grid gap-[2px] border-2 border-border bg-border sm:grid-cols-2 lg:grid-cols-3">
           {courses.map((course) => (
             <CourseCard
               key={course.id}

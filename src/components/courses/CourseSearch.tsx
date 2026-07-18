@@ -26,19 +26,25 @@ export function CourseSearch({
     router.push(`/courses?${params.toString()}`);
   }
 
+  const fieldClass =
+    "w-full min-w-0 flex-1 border-2 border-border bg-background px-4 py-3 text-base outline-none focus:border-primary sm:py-2.5 sm:text-sm";
+
   return (
-    <form onSubmit={handleSearch} className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+    <form
+      onSubmit={handleSearch}
+      className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap"
+    >
       <input
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Rechercher un cours..."
-        className="w-full min-w-0 flex-1 rounded-lg border border-border bg-card px-4 py-3 text-base outline-none focus:border-primary focus:ring-1 focus:ring-primary sm:py-2.5 sm:text-sm"
+        className={fieldClass}
       />
       <select
         value={category}
         onChange={(e) => setCategory(e.target.value)}
-        className="w-full rounded-lg border border-border bg-card px-4 py-3 text-base outline-none focus:border-primary sm:w-auto sm:py-2.5 sm:text-sm"
+        className={`${fieldClass} sm:w-auto`}
       >
         <option value="">Toutes catégories</option>
         {categories.map((cat) => (
@@ -49,7 +55,7 @@ export function CourseSearch({
       </select>
       <button
         type="submit"
-        className="w-full rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-white transition hover:bg-primary-dark sm:w-auto sm:py-2.5"
+        className="w-full border-2 border-primary bg-primary px-6 py-3 text-left text-sm font-semibold text-background transition hover:bg-primary-dark sm:w-auto sm:py-2.5"
       >
         Rechercher
       </button>

@@ -38,7 +38,7 @@ export function MobileMenu({ user }: MobileMenuProps) {
         type="button"
         onClick={() => setOpen(!open)}
         aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}
-        className="flex h-10 w-10 items-center justify-center rounded-lg border border-border"
+        className="flex h-10 w-10 items-center justify-center border-2 border-border"
       >
         {open ? (
           <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -57,9 +57,9 @@ export function MobileMenu({ user }: MobileMenuProps) {
             className="fixed inset-0 top-16 z-40 bg-black/20"
             onClick={() => setOpen(false)}
           />
-          <nav className="absolute left-0 right-0 top-16 z-50 border-b border-border bg-card px-4 py-4 shadow-lg">
+          <nav className="absolute left-0 right-0 top-16 z-50 border-b-2 border-border bg-card px-4 py-4">
             {user && (
-              <p className="mb-2 px-4 text-sm font-medium">
+              <p className="mb-2 px-2 text-sm font-semibold uppercase tracking-[.08em] text-primary-deep">
                 Bonjour {user.firstName}
               </p>
             )}
@@ -69,18 +69,18 @@ export function MobileMenu({ user }: MobileMenuProps) {
                   <Link
                     href={link.href}
                     onClick={() => setOpen(false)}
-                    className="block rounded-lg px-4 py-3 text-sm font-medium transition hover:bg-background"
+                    className="block px-2 py-3 text-sm font-medium transition hover:bg-background hover:text-primary"
                   >
                     {link.label}
                   </Link>
                 </li>
               ))}
               {user && (
-                <li className="border-t border-border pt-2">
+                <li className="border-t border-border-soft pt-2">
                   <button
                     type="button"
                     onClick={handleLogout}
-                    className="block w-full rounded-lg px-4 py-3 text-left text-sm font-medium text-red-600 transition hover:bg-red-50"
+                    className="block w-full px-2 py-3 text-left text-sm font-medium text-primary transition hover:bg-[#ffe0d9]/30"
                   >
                     Déconnexion
                   </button>
@@ -88,11 +88,11 @@ export function MobileMenu({ user }: MobileMenuProps) {
               )}
               {!user && (
                 <>
-                  <li className="border-t border-border pt-2">
+                  <li className="border-t border-border-soft pt-2">
                     <Link
                       href="/login"
                       onClick={() => setOpen(false)}
-                      className="block rounded-lg px-4 py-3 text-sm font-medium transition hover:bg-background"
+                      className="block px-2 py-3 text-sm font-medium transition hover:bg-background"
                     >
                       Connexion
                     </Link>
@@ -101,7 +101,7 @@ export function MobileMenu({ user }: MobileMenuProps) {
                     <Link
                       href="/register"
                       onClick={() => setOpen(false)}
-                      className="block rounded-lg bg-primary px-4 py-3 text-center text-sm font-semibold text-white"
+                      className="block bg-primary px-2 py-3 text-left text-sm font-semibold text-background"
                     >
                       S&apos;inscrire
                     </Link>

@@ -1,15 +1,17 @@
 @import "tailwindcss";
 
 :root {
-  --background: #faf9f7;
-  --foreground: #1a1a1a;
-  --primary: #e63946;
-  --primary-dark: #c1121f;
-  --secondary: #457b9d;
-  --accent: #f4a261;
-  --muted: #6b7280;
-  --card: #ffffff;
-  --border: #e5e7eb;
+  --background: #f3f2f2;
+  --foreground: #201e1d;
+  --primary: #ec3013;
+  --primary-dark: #dd2b0f;
+  --primary-deep: #ae1800;
+  --secondary: #ae1800;
+  --accent: #ff563c;
+  --muted: #605d5d;
+  --card: #eae9e9;
+  --border: rgba(32, 30, 29, 0.4);
+  --border-soft: rgba(32, 30, 29, 0.2);
 }
 
 @theme inline {
@@ -17,16 +19,44 @@
   --color-foreground: var(--foreground);
   --color-primary: var(--primary);
   --color-primary-dark: var(--primary-dark);
+  --color-primary-deep: var(--primary-deep);
   --color-secondary: var(--secondary);
   --color-accent: var(--accent);
   --color-muted: var(--muted);
   --color-card: var(--card);
   --color-border: var(--border);
-  --font-sans: var(--font-geist-sans);
+  --color-border-soft: var(--border-soft);
+  --font-sans: var(--font-archivo);
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --radius-2xl: 0px;
+  --radius-3xl: 0px;
+  --radius-full: 0px;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+::selection {
+  background: #ffe0d9;
+}
+
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes marquee {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
 }

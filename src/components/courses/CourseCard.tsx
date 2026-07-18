@@ -40,31 +40,36 @@ export function CourseCard({
   return (
     <Link
       href={`/courses/${slug}`}
-      className="group overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition hover:shadow-lg"
+      className="group overflow-hidden bg-card transition hover:bg-[#f8f4f4]"
     >
       <div className="relative">
-        <VideoThumbnail
-          src={thumbnailUrl}
-          alt={title}
-          duration={formatDuration(durationMin)}
-          aspect="card"
-          className="rounded-none"
-        />
+        <div className="grayscale contrast-[1.08]">
+          <VideoThumbnail
+            src={thumbnailUrl}
+            alt={title}
+            duration={formatDuration(durationMin)}
+            aspect="card"
+            className="rounded-none"
+          />
+        </div>
         {categoryName && (
-          <span className="absolute left-3 top-3 z-10 rounded-full bg-card/90 px-3 py-1 text-xs font-medium backdrop-blur-sm">
+          <span className="absolute left-0 top-0 z-10 bg-primary px-2.5 py-1.5 text-[11px] font-semibold uppercase tracking-[.08em] text-background">
             {categoryName}
           </span>
         )}
       </div>
-      <div className="p-4">
-        <h3 className="line-clamp-2 font-semibold leading-snug group-hover:text-primary">
+      <div className="p-5">
+        <h3 className="line-clamp-2 text-lg font-semibold leading-snug group-hover:text-primary">
           {title}
         </h3>
-        <p className="mt-1 text-sm text-muted">{teacherName}</p>
-        <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
-          <span className="text-lg font-bold text-primary">{formattedPrice}</span>
+        <p className="mt-2 text-sm text-muted">{teacherName}</p>
+        <div className="mt-4 flex flex-wrap items-baseline justify-between gap-2 border-t border-border-soft pt-3">
+          <span className="text-lg font-extrabold text-primary-deep">
+            {formattedPrice}
+          </span>
           <span className="text-xs text-muted">
             {lessonCount} leçon{lessonCount > 1 ? "s" : ""} · {level}
+            {durationMin ? ` · ${formatDuration(durationMin)}` : ""}
           </span>
         </div>
       </div>

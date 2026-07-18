@@ -84,10 +84,10 @@ export function AuthForm({ mode }: AuthFormProps) {
               <button
                 type="button"
                 onClick={() => setRole("STUDENT")}
-                className={`rounded-xl border p-4 text-left text-sm transition ${
+                className={`border-2 p-4 text-left text-sm transition ${
                   role === "STUDENT"
-                    ? "border-primary bg-primary/5"
-                    : "border-border hover:border-primary/30"
+                    ? "border-primary bg-[#ffe0d9]/40"
+                    : "border-border hover:border-primary"
                 }`}
               >
                 <p className="font-semibold">Élève</p>
@@ -98,10 +98,10 @@ export function AuthForm({ mode }: AuthFormProps) {
               <button
                 type="button"
                 onClick={() => setRole("TEACHER")}
-                className={`rounded-xl border p-4 text-left text-sm transition ${
+                className={`border-2 p-4 text-left text-sm transition ${
                   role === "TEACHER"
-                    ? "border-primary bg-primary/5"
-                    : "border-border hover:border-primary/30"
+                    ? "border-primary bg-[#ffe0d9]/40"
+                    : "border-border hover:border-primary"
                 }`}
               >
                 <p className="font-semibold">Professeur</p>
@@ -126,7 +126,7 @@ export function AuthForm({ mode }: AuthFormProps) {
                 id="firstName"
                 name="firstName"
                 required
-                className="mt-1 w-full rounded-lg border border-border bg-background px-4 py-2.5 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                className="mt-1 w-full border-2 border-border bg-background px-4 py-2.5 text-sm outline-none focus:border-primary"
               />
             </div>
             <div>
@@ -137,7 +137,7 @@ export function AuthForm({ mode }: AuthFormProps) {
                 id="lastName"
                 name="lastName"
                 required
-                className="mt-1 w-full rounded-lg border border-border bg-background px-4 py-2.5 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                className="mt-1 w-full border-2 border-border bg-background px-4 py-2.5 text-sm outline-none focus:border-primary"
               />
             </div>
           </div>
@@ -151,7 +151,7 @@ export function AuthForm({ mode }: AuthFormProps) {
                 id="specialty"
                 name="specialty"
                 placeholder="Ex : Art textile, Cuisine, Musique..."
-                className="mt-1 w-full rounded-lg border border-border bg-background px-4 py-2.5 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                className="mt-1 w-full border-2 border-border bg-background px-4 py-2.5 text-sm outline-none focus:border-primary"
               />
             </div>
           )}
@@ -167,7 +167,7 @@ export function AuthForm({ mode }: AuthFormProps) {
           name="email"
           type="email"
           required
-          className="mt-1 w-full rounded-lg border border-border bg-background px-4 py-2.5 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+          className="mt-1 w-full border-2 border-border bg-background px-4 py-2.5 text-sm outline-none focus:border-primary"
         />
       </div>
 
@@ -181,12 +181,12 @@ export function AuthForm({ mode }: AuthFormProps) {
           type="password"
           required
           minLength={8}
-          className="mt-1 w-full rounded-lg border border-border bg-background px-4 py-2.5 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+          className="mt-1 w-full border-2 border-border bg-background px-4 py-2.5 text-sm outline-none focus:border-primary"
         />
       </div>
 
       {error && (
-        <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600">
+        <p className="border-2 border-primary/30 bg-[#ffe0d9]/30 px-4 py-3 text-sm text-primary-deep">
           {error}
         </p>
       )}
@@ -194,7 +194,7 @@ export function AuthForm({ mode }: AuthFormProps) {
       <button
         type="submit"
         disabled={loading}
-        className="w-full rounded-lg bg-primary py-3 text-sm font-semibold text-white transition hover:bg-primary-dark disabled:opacity-50"
+        className="w-full bg-primary py-3 text-left text-sm font-semibold text-background transition hover:bg-primary-dark disabled:opacity-50"
       >
         {loading
           ? "Chargement..."

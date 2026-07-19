@@ -1,28 +1,33 @@
+import Image from "next/image";
 import Link from "next/link";
 
 type LogoVariant = "primary" | "red" | "onDark" | "icon";
 
 const LOGOS: Record<
   LogoVariant,
-  { src: string; aspectRatio: number; className?: string }
+  { src: string; width: number; height: number; className?: string }
 > = {
   /** Texte foncé, fond transparent — header, pages claires */
   primary: {
-    src: "/branding/logo-capo-primary.svg",
-    aspectRatio: 595.28 / 205.28,
+    src: "/branding/logo-capo-primary.png",
+    width: 148,
+    height: 51,
   },
-  /** Texte blanc, fond transparent — footer, bandeaux rouges/noirs */
+  /** Texte blanc, fond transparent — footer, bandeaux sombres */
   red: {
-    src: "/branding/logo-capo-on-dark.svg",
-    aspectRatio: 595.28 / 205.28,
+    src: "/branding/logo-capo-on-dark.png",
+    width: 148,
+    height: 51,
   },
   onDark: {
-    src: "/branding/logo-capo-on-dark.svg",
-    aspectRatio: 595.28 / 205.28,
+    src: "/branding/logo-capo-on-dark.png",
+    width: 148,
+    height: 51,
   },
   icon: {
-    src: "/branding/logo-capo-icon.svg",
-    aspectRatio: 1,
+    src: "/branding/logo-capo-icon.png",
+    width: 40,
+    height: 40,
   },
 };
 
@@ -43,13 +48,12 @@ export function Logo({
   const isIcon = variant === "icon";
 
   const image = (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
+    <Image
       src={logo.src}
       alt="CAPO Studio"
-      width={isIcon ? 40 : 148}
-      height={isIcon ? 40 : Math.round(148 / logo.aspectRatio)}
-      fetchPriority={priority ? "high" : undefined}
+      width={logo.width}
+      height={logo.height}
+      priority={priority}
       className={
         isIcon
           ? `h-9 w-9 sm:h-10 sm:w-10 ${logo.className ?? ""} ${className}`

@@ -19,11 +19,23 @@ npx cap sync android
 
 ## Télécharger l’APK (recommandé)
 
-1. Allez sur GitHub → **Actions** → workflow **Build Android APK**
-2. Cliquez **Run workflow** (ou attendez le build auto après push)
-3. Une fois terminé, ouvrez l’exécution → section **Artifacts** → téléchargez `capo-studio-debug-apk`
-4. Transférez `app-debug.apk` sur votre téléphone et installez-le  
-   (autorisez « sources inconnues » si Android le demande)
+### Option A — Build local (Windows, le plus simple)
+
+```powershell
+cd mobile
+.\build-apk.ps1
+```
+
+APK généré : **`mobile/dist/capo-studio-debug.apk`** (~5 Mo)
+
+Transférez-le sur votre téléphone et installez-le (autorisez « sources inconnues » si demandé).
+
+### Option B — GitHub Actions
+
+1. GitHub → **Actions** → **Build Android APK** → **Run workflow**
+2. Téléchargez l’artifact `capo-studio-debug-apk`
+
+> Si le job échoue en ~2 s avec **billing issue**, votre compte GitHub Actions est bloqué (Settings → Billing). Utilisez l’option A.
 
 ## Build local (Windows + Android Studio)
 

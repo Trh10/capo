@@ -1,15 +1,9 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
-import { spawnSync } from "child_process";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const mobileRoot = join(__dirname, "..");
-
-spawnSync("node", ["scripts/generate-icons.mjs"], {
-  cwd: mobileRoot,
-  stdio: "inherit",
-});
 
 const manifestPath = join(mobileRoot, "android", "app", "src", "main", "AndroidManifest.xml");
 if (!existsSync(manifestPath)) {
@@ -54,5 +48,4 @@ if (!xml.includes("usesCleartextTraffic")) {
   );
 }
 writeFileSync(manifestPath, xml);
-console.log("AndroidManifest: HTTP cleartext + network config OK");
-console.log("Préparation mobile terminée.");
+console.log("AndroidManifest: HTTP cleartext OK");

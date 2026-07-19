@@ -4,8 +4,9 @@
   "private": true,
   "description": "Coque Android CAPO Studio — charge le site en production",
   "scripts": {
-    "prepare": "node scripts/prepare.mjs",
-    "sync": "npm run prepare && npx cap sync android",
+    "icons": "node scripts/generate-icons.mjs",
+    "prepare:android": "node scripts/prepare.mjs",
+    "sync": "npx cap sync android && npm run icons && npm run prepare:android",
     "open:android": "npx cap open android",
     "build:apk": "npm run sync && cd android && gradlew.bat assembleDebug"
   },
@@ -15,6 +16,7 @@
   },
   "devDependencies": {
     "@capacitor/cli": "^8.4.2",
+    "sharp": "^0.34.3",
     "typescript": "^5.8.2"
   }
 }

@@ -15,9 +15,14 @@ export const metadata: Metadata = {
   description:
     "Apprenez illustration, artisanat, design et plus encore auprès de professionnels passionnés. Cours guidés, accès illimité.",
   icons: {
-    icon: "/favicon.png",
-    apple: "/apple-touch-icon.png",
+    icon: [
+      { url: "/favicon.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "512x512", type: "image/png" },
+    ],
   },
+  manifest: "/site.webmanifest",
 };
 
 export const viewport = {

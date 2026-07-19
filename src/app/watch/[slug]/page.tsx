@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import {
   getMaxWatchSeconds,
+  hasFullCourseAccess,
   hasPurchasedCourse,
 } from "@/lib/course-access";
 import { ContentViewer } from "@/components/video/ContentViewer";
@@ -25,7 +26,7 @@ export default async function WatchPage({ params, searchParams }: WatchPageProps
     include: {
       teacher: {
         include: {
-          user: { select: { firstName: true, lastName: true } },
+          user: { select: { id: true, firstName: true, lastName: true } },
         },
       },
       lessons: { orderBy: { order: "asc" } },
@@ -35,6 +36,11 @@ export default async function WatchPage({ params, searchParams }: WatchPageProps
   if (!course) notFound();
 
   const hasPurchased = await hasPurchasedCourse(user?.id, course.id);
+  const hasCourseAccess = await hasFullCourseAccess(
+    user?.id,
+    course.id,
+    course.teacher.user.id
+  );
 
   const currentLesson =
     course.lessons.find((l) => l.slug === lessonSlug) ||
@@ -43,7 +49,7 @@ export default async function WatchPage({ params, searchParams }: WatchPageProps
 
   if (!currentLesson) notFound();
 
-  const maxWatchSeconds = getMaxWatchSeconds(hasPurchased, currentLesson.isFree);
+  const maxWatchSeconds = getMaxWatchSeconds(hasCourseAccess, currentLesson.isFree);
   const durationMin = Math.max(1, Math.floor(currentLesson.duration / 60));
   const hasFullAccess = maxWatchSeconds === null;
 
@@ -125,7 +131,7 @@ export default async function WatchPage({ params, searchParams }: WatchPageProps
       <div className="mt-4 divide-y divide-border-soft border-2 border-border">
         {course.lessons.map((lesson, i) => {
           const active = lesson.id === currentLesson.id;
-          const locked = !hasPurchased && !lesson.isFree;
+          const locked = !hasCourseAccess && !lesson.isFree;
 
           return (
             <Link

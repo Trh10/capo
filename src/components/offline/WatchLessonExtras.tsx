@@ -23,8 +23,9 @@ export function WatchLessonExtras({
   hasAccess,
   hasVideo,
 }: WatchLessonExtrasProps) {
-  const [canDownload, setCanDownload] = useState(false);
+  const [canDownload, setCanDownload] = useState(true);
   const [disabledReason, setDisabledReason] = useState<string | null>(null);
+  const [checked, setChecked] = useState(false);
 
   useEffect(() => {
     if (!hasAccess || !hasVideo) return;
@@ -36,9 +37,11 @@ export function WatchLessonExtras({
       .then((data) => {
         setCanDownload(Boolean(data.canDownload));
         setDisabledReason(data.reason ?? null);
+        setChecked(true);
       })
       .catch(() => {
         setCanDownload(false);
+        setChecked(true);
       });
   }, [hasAccess, hasVideo, lessonId]);
 
@@ -52,7 +55,8 @@ export function WatchLessonExtras({
       lessonTitle={lessonTitle}
       contentType={contentType}
       canDownload={canDownload}
-      disabledReason={disabledReason}
+      disabledReason={checked ? disabledReason : null}
+      loading={!checked}
     />
   );
 }

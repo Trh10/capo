@@ -15,6 +15,7 @@ interface OfflineDownloadButtonProps {
   contentType: string;
   canDownload: boolean;
   disabledReason?: string | null;
+  loading?: boolean;
 }
 
 type DownloadState = "idle" | "loading" | "saved" | "error";
@@ -27,6 +28,7 @@ export function OfflineDownloadButton({
   contentType,
   canDownload,
   disabledReason,
+  loading = false,
 }: OfflineDownloadButtonProps) {
   const [state, setState] = useState<DownloadState>("idle");
   const [message, setMessage] = useState<string | null>(null);
@@ -87,24 +89,26 @@ export function OfflineDownloadButton({
     }
   }, [canDownload, contentType, courseSlug, lessonId, lessonSlug, lessonTitle, state]);
 
-  if (!canDownload && !disabledReason) return null;
+  if (!canDownload && !disabledReason && !loading) return null;
 
   return (
     <div className="flex flex-col gap-2">
       <button
         type="button"
         onClick={handleDownload}
-        disabled={!canDownload || state === "loading" || state === "saved"}
+        disabled={!canDownload || state === "loading" || state === "saved" || loading}
         className="inline-flex items-center justify-start gap-2 border-2 border-border bg-card px-4 py-2.5 text-sm font-semibold transition hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-50"
       >
-        {state === "loading" && (
+        {(state === "loading" || loading) && (
           <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
         )}
         {state === "saved"
           ? "✓ Téléchargé hors ligne"
-          : state === "loading"
+          : state === "loading" || loading
             ? "Téléchargement…"
-            : "Télécharger hors ligne"}
+            : !canDownload
+              ? "Téléchargement indisponible"
+              : "Télécharger hors ligne"}
       </button>
       {disabledReason && state !== "saved" && (
         <p className="text-xs leading-relaxed text-muted">{disabledReason}</p>

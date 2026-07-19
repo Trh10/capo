@@ -6,6 +6,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { formatPrice } from "@/lib/format";
 import {
   getMaxWatchSeconds,
+  hasFullCourseAccess,
   hasPurchasedCourse,
 } from "@/lib/course-access";
 import { confirmCheckoutSession } from "@/lib/stripe-checkout";
@@ -13,6 +14,7 @@ import { CourseVideoPreview } from "@/components/video/CourseVideoPreview";
 import { LessonVideoItem } from "@/components/video/LessonVideoItem";
 import { BuyCourseButton } from "@/components/courses/BuyCourseButton";
 import { PurchaseBanner } from "@/components/courses/PurchaseBanner";
+import { CourseOfflinePanel } from "@/components/offline/CourseOfflinePanel";
 
 interface CoursePageProps {
   params: Promise<{ slug: string }>;
@@ -54,6 +56,11 @@ export default async function CourseDetailPage({
   }
 
   const hasPurchased = await hasPurchasedCourse(user?.id, course.id);
+  const hasCourseAccess = await hasFullCourseAccess(
+    user?.id,
+    course.id,
+    course.teacher.user.id
+  );
   const formattedPrice = formatPrice(course.price);
   const totalDuration = Math.round(
     course.lessons.reduce((sum, l) => sum + l.duration, 0) / 60
@@ -64,7 +71,7 @@ export default async function CourseDetailPage({
       ? `${Math.floor(totalDuration / 60)}h ${totalDuration % 60}min`
       : `${totalDuration} min`;
   const previewMaxWatchSeconds = previewLesson
-    ? getMaxWatchSeconds(hasPurchased, previewLesson.isFree)
+    ? getMaxWatchSeconds(hasCourseAccess, previewLesson.isFree)
     : null;
   const stripeConfigured = Boolean(process.env.STRIPE_SECRET_KEY);
 
@@ -88,6 +95,20 @@ export default async function CourseDetailPage({
             duration={durationLabel}
             videoUrl={previewLesson?.videoUrl}
             maxWatchSeconds={previewMaxWatchSeconds}
+          />
+
+          <CourseOfflinePanel
+            courseSlug={course.slug}
+            lessons={course.lessons.map((l) => ({
+              id: l.id,
+              slug: l.slug,
+              title: l.title,
+              contentType: l.contentType,
+              videoUrl: l.videoUrl,
+              isFree: l.isFree,
+            }))}
+            hasCourseAccess={hasCourseAccess}
+            isLoggedIn={Boolean(user)}
           />
 
           <h1 className="mt-6 text-2xl font-extrabold tracking-tight sm:mt-8 sm:text-3xl">
@@ -126,7 +147,7 @@ export default async function CourseDetailPage({
                 courseSlug={course.slug}
                 lessonSlug={lesson.slug}
                 thumbnailUrl={course.thumbnailUrl}
-                locked={!hasPurchased && !lesson.isFree}
+                locked={!hasCourseAccess && !lesson.isFree}
               />
             ))}
           </div>
@@ -136,12 +157,12 @@ export default async function CourseDetailPage({
           <div className="border-2 border-border bg-card p-6 lg:sticky lg:top-24">
             <p className="text-3xl font-extrabold text-primary">{formattedPrice}</p>
 
-            {hasPurchased ? (
+            {hasCourseAccess ? (
               <Link
                 href={`/watch/${course.slug}`}
                 className="mt-4 block w-full bg-primary py-3 text-center text-sm font-semibold text-background transition hover:bg-primary-dark"
               >
-                Continuer le cours
+                {hasPurchased ? "Continuer le cours" : "Regarder le cours"}
               </Link>
             ) : (
               <BuyCourseButton

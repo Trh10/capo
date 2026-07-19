@@ -17,18 +17,39 @@ export async function hasPurchasedCourse(
   return purchase?.status === "COMPLETED";
 }
 
+/** Accès complet : acheté, prof du cours, ou admin. */
+export async function hasFullCourseAccess(
+  userId: string | undefined,
+  courseId: string,
+  courseTeacherUserId?: string
+): Promise<boolean> {
+  if (!userId) return false;
+
+  if (courseTeacherUserId && courseTeacherUserId === userId) {
+    return true;
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { role: true },
+  });
+  if (user?.role === "ADMIN") return true;
+
+  return hasPurchasedCourse(userId, courseId);
+}
+
 export function canWatchLessonFully(
-  hasPurchased: boolean,
+  hasCourseAccess: boolean,
   isFree: boolean
 ): boolean {
-  return hasPurchased || isFree;
+  return hasCourseAccess || isFree;
 }
 
 export function getMaxWatchSeconds(
-  hasPurchased: boolean,
+  hasCourseAccess: boolean,
   isFree: boolean
 ): number | null {
-  if (canWatchLessonFully(hasPurchased, isFree)) {
+  if (canWatchLessonFully(hasCourseAccess, isFree)) {
     return null;
   }
   return PREVIEW_DURATION_SEC;

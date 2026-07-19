@@ -46,7 +46,15 @@ export async function getLessonDownloadAccess(
   const lesson = await prisma.lesson.findUnique({
     where: { id: lessonId },
     include: {
-      course: { select: { id: true, slug: true, title: true, isPublished: true } },
+      course: {
+        select: {
+          id: true,
+          slug: true,
+          title: true,
+          isPublished: true,
+          teacher: { select: { userId: true } },
+        },
+      },
     },
   });
 
@@ -59,7 +67,15 @@ export async function getLessonDownloadAccess(
   }
 
   const purchased = await hasPurchasedCourse(userId, lesson.course.id);
-  if (!purchased && !lesson.isFree) {
+  const isOwner = lesson.course.teacher?.userId === userId;
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { role: true },
+  });
+  const hasAccess =
+    purchased || lesson.isFree || isOwner || user?.role === "ADMIN";
+
+  if (!hasAccess) {
     return { error: "Achetez le cours pour télécharger cette leçon", status: 403 as const };
   }
 

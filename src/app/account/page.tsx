@@ -7,6 +7,7 @@ import { MediaImage } from "@/components/media/MediaImage";
 import { DeviceList } from "@/components/account/DeviceList";
 import { LogoutButton } from "@/components/account/LogoutButton";
 import { ProfileForm } from "@/components/account/ProfileForm";
+import { OfflineDownloadsList } from "@/components/offline/OfflineDownloadsList";
 
 type PurchasedCourse = {
   slug: string;
@@ -41,11 +42,14 @@ export default async function AccountPage() {
   ]);
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-12 sm:px-6">
-      <h1 className="text-3xl font-bold">Mon compte</h1>
+    <div className="mx-auto max-w-2xl px-4 py-12 sm:px-10">
+      <p className="text-xs font-semibold uppercase tracking-[.14em] text-primary-deep">
+        Compte
+      </p>
+      <h1 className="mt-2 text-3xl font-extrabold tracking-tight">Mon compte</h1>
       <p className="mt-2 text-muted">Modifiez votre profil et gérez vos cours.</p>
 
-      <section className="mt-8 rounded-2xl border border-border bg-card p-6">
+      <section className="mt-8 border-2 border-border bg-card p-6">
         <h2 className="text-lg font-semibold">Mon profil</h2>
         <div className="mt-4">
           <ProfileForm
@@ -64,7 +68,7 @@ export default async function AccountPage() {
       </section>
 
       {user.role === "TEACHER" && (
-        <section className="mt-6 rounded-2xl border border-border bg-card p-6">
+        <section className="mt-6 border-2 border-border bg-card p-6">
           <h2 className="text-lg font-semibold">Espace professeur</h2>
           <p className="mt-2 text-sm text-muted">
             Gérez vos cours et uploadez vos contenus.
@@ -78,7 +82,7 @@ export default async function AccountPage() {
         </section>
       )}
 
-      <section className="mt-6 rounded-2xl border border-border bg-card p-6">
+      <section className="mt-6 border-2 border-border bg-card p-6">
         <h2 className="text-lg font-semibold">Mes cours ({purchases.length})</h2>
         {purchases.length === 0 ? (
           <p className="mt-4 text-sm text-muted">
@@ -93,15 +97,15 @@ export default async function AccountPage() {
               <Link
                 key={course.slug}
                 href={`/watch/${course.slug}`}
-                className="flex items-center gap-4 rounded-xl border border-border p-3 transition hover:border-primary/30"
+                className="flex items-center gap-4 border border-border-soft bg-background p-3 transition hover:border-primary/40"
               >
-                <div className="relative h-14 w-20 shrink-0 overflow-hidden rounded-lg bg-secondary/10">
+                <div className="relative h-14 w-20 shrink-0 overflow-hidden bg-secondary/10">
                   {course.thumbnailUrl && (
                     <MediaImage
                       src={course.thumbnailUrl}
                       alt={course.title}
                       fill
-                      className="object-cover"
+                      className="object-cover grayscale contrast-[1.08]"
                       sizes="80px"
                     />
                   )}
@@ -118,7 +122,15 @@ export default async function AccountPage() {
         )}
       </section>
 
-      <section className="mt-6 rounded-2xl border border-border bg-card p-6">
+      <section className="mt-6 border-2 border-border bg-card p-6">
+        <h2 className="text-lg font-semibold">Téléchargements hors ligne</h2>
+        <p className="mt-1 text-sm text-muted">
+          Contenus enregistrés sur cet appareil pour une lecture sans connexion.
+        </p>
+        <OfflineDownloadsList />
+      </section>
+
+      <section className="mt-6 border-2 border-border bg-card p-6">
         <h2 className="text-lg font-semibold">Mes appareils ({devices.length})</h2>
         <div className="mt-4">
           <DeviceList

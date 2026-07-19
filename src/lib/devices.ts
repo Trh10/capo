@@ -93,16 +93,4 @@ export async function canDownloadLessonOnDevice(
   return { allowed: true };
 }
 
-export function generateDeviceFingerprint(
-  userAgent: string,
-  platform: string
-): string {
-  const raw = `${userAgent}|${platform}`;
-  let hash = 0;
-  for (let i = 0; i < raw.length; i++) {
-    const char = raw.charCodeAt(i);
-    hash = (hash << 5) - hash + char;
-    hash |= 0;
-  }
-  return `fp_${Math.abs(hash).toString(36)}`;
-}
+export { generateDeviceFingerprint } from "./device-fingerprint";

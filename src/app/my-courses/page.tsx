@@ -24,12 +24,15 @@ export default async function MyCoursesPage() {
   });
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
-      <h1 className="text-3xl font-bold">Mes cours</h1>
+    <div className="mx-auto max-w-3xl px-4 py-12 sm:px-10">
+      <p className="text-xs font-semibold uppercase tracking-[.14em] text-primary-deep">
+        Bibliothèque
+      </p>
+      <h1 className="mt-2 text-3xl font-extrabold tracking-tight">Mes cours</h1>
       <p className="mt-2 text-muted">Reprenez là où vous vous êtes arrêté.</p>
 
       {purchases.length === 0 ? (
-        <div className="mt-8 rounded-2xl border border-dashed border-border p-10 text-center">
+        <div className="mt-8 border-2 border-dashed border-border p-10 text-center">
           <p className="text-muted">Vous n&apos;avez pas encore de cours.</p>
           <Link
             href="/courses"
@@ -44,15 +47,15 @@ export default async function MyCoursesPage() {
             <Link
               key={course.slug}
               href={`/watch/${course.slug}`}
-              className="flex items-center gap-4 rounded-xl border border-border bg-card p-4 transition hover:border-primary/30"
+              className="flex items-center gap-4 border-2 border-border bg-card p-4 transition hover:border-primary/40"
             >
-              <div className="relative h-16 w-24 shrink-0 overflow-hidden rounded-lg bg-secondary/10">
+              <div className="relative h-16 w-24 shrink-0 overflow-hidden bg-secondary/10">
                 {course.thumbnailUrl && (
                   <MediaImage
                     src={course.thumbnailUrl}
                     alt={course.title}
                     fill
-                    className="object-cover"
+                    className="object-cover grayscale contrast-[1.08]"
                     sizes="96px"
                   />
                 )}

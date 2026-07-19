@@ -69,11 +69,15 @@ export default async function CourseDetailPage({
   const stripeConfigured = Boolean(process.env.STRIPE_SECRET_KEY);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
+    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-10">
       <PurchaseBanner
         purchased={purchased === "1"}
         cancelled={cancelled === "1"}
       />
+
+      <p className="text-xs font-semibold uppercase tracking-[.14em] text-primary-deep">
+        Cours
+      </p>
 
       <div className="grid gap-10 lg:grid-cols-3">
         <div className="lg:col-span-2">
@@ -86,27 +90,31 @@ export default async function CourseDetailPage({
             maxWatchSeconds={previewMaxWatchSeconds}
           />
 
-          <h1 className="mt-6 text-2xl font-bold sm:mt-8 sm:text-3xl">{course.title}</h1>
+          <h1 className="mt-6 text-2xl font-extrabold tracking-tight sm:mt-8 sm:text-3xl">
+            {course.title}
+          </h1>
           <p className="mt-4 leading-relaxed text-muted">{course.description}</p>
 
-          <div className="mt-6 flex flex-wrap gap-3 text-sm">
-            <span className="rounded-full border border-border bg-card px-3 py-1">
+          <div className="mt-6 flex flex-wrap gap-2 text-sm">
+            <span className="border border-border-soft bg-card px-3 py-1">
               {course.level}
             </span>
-            <span className="rounded-full border border-border bg-card px-3 py-1">
+            <span className="border border-border-soft bg-card px-3 py-1">
               {course.lessons.length} leçons
             </span>
-            <span className="rounded-full border border-border bg-card px-3 py-1">
+            <span className="border border-border-soft bg-card px-3 py-1">
               {totalDuration} min
             </span>
             {course.category && (
-              <span className="rounded-full border border-border bg-card px-3 py-1">
+              <span className="border border-border-soft bg-card px-3 py-1">
                 {course.category.name}
               </span>
             )}
           </div>
 
-          <h2 className="mt-10 text-xl font-semibold">Contenu du cours</h2>
+          <h2 className="mt-10 text-xs font-semibold uppercase tracking-[.14em] text-primary-deep">
+            Contenu du cours
+          </h2>
           <div className="mt-4 space-y-3">
             {course.lessons.map((lesson, i) => (
               <LessonVideoItem
@@ -125,13 +133,13 @@ export default async function CourseDetailPage({
         </div>
 
         <div className="lg:col-span-1">
-          <div className="rounded-2xl border border-border bg-card p-6 lg:sticky lg:top-24">
-            <p className="text-3xl font-bold text-primary">{formattedPrice}</p>
+          <div className="border-2 border-border bg-card p-6 lg:sticky lg:top-24">
+            <p className="text-3xl font-extrabold text-primary">{formattedPrice}</p>
 
             {hasPurchased ? (
               <Link
                 href={`/watch/${course.slug}`}
-                className="mt-4 block w-full rounded-lg bg-primary py-3 text-center text-sm font-semibold text-white transition hover:bg-primary-dark"
+                className="mt-4 block w-full bg-primary py-3 text-center text-sm font-semibold text-background transition hover:bg-primary-dark"
               >
                 Continuer le cours
               </Link>
@@ -160,7 +168,7 @@ export default async function CourseDetailPage({
                     src={course.teacher.user.avatarUrl}
                     alt={`${course.teacher.user.firstName} ${course.teacher.user.lastName}`}
                     fill
-                    className="object-cover"
+                    className="object-cover grayscale contrast-[1.08]"
                     sizes="48px"
                   />
                 </div>

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Archivo } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
+import { NativeAwareFooter } from "@/components/layout/NativeAwareFooter";
 import { MobileNavProvider } from "@/components/mobile/MobileNavProvider";
 import { MobileBackBar } from "@/components/mobile/MobileBackBar";
 const archivo = Archivo({
@@ -46,7 +46,7 @@ export default function RootLayout({
           <Header />
           <MobileBackBar />
           <main className="min-h-screen">{children}</main>
-          <Footer />
+          <NativeAwareFooter />
         </MobileNavProvider>
       </body>    </html>
   );

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { getOfflineBlobUrl, getOfflineLesson } from "@/lib/offline-storage";
 
 interface VideoPlayerProps {
   videoUrl: string;
@@ -26,6 +27,7 @@ export function VideoPlayer({
   const lastSavedRef = useRef(0);
   const [previewEnded, setPreviewEnded] = useState(false);
   const [resumeApplied, setResumeApplied] = useState(false);
+  const [playbackUrl, setPlaybackUrl] = useState(videoUrl);
   const isPreview = maxWatchSeconds !== null && maxWatchSeconds > 0;
   const canSaveProgress = Boolean(lessonId) && !isPreview;
 
@@ -86,6 +88,32 @@ export function VideoPlayer({
     setResumeApplied(true);
   }, [initialWatchedSec, isPreview, resumeApplied]);
 
+  const blobUrlRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (!lessonId || isPreview) {
+      setPlaybackUrl(videoUrl);
+      return;
+    }
+
+    void getOfflineLesson(lessonId).then((record) => {
+      if (record) {
+        if (blobUrlRef.current) URL.revokeObjectURL(blobUrlRef.current);
+        blobUrlRef.current = getOfflineBlobUrl(record);
+        setPlaybackUrl(blobUrlRef.current);
+      } else {
+        setPlaybackUrl(videoUrl);
+      }
+    });
+
+    return () => {
+      if (blobUrlRef.current) {
+        URL.revokeObjectURL(blobUrlRef.current);
+        blobUrlRef.current = null;
+      }
+    };
+  }, [isPreview, lessonId, videoUrl]);
+
   useEffect(() => {
     const video = videoRef.current;
     return () => {
@@ -96,10 +124,10 @@ export function VideoPlayer({
   }, [canSaveProgress, saveProgress]);
 
   return (
-    <div className="relative aspect-video overflow-hidden rounded-2xl bg-black">
+    <div className="relative aspect-video overflow-hidden border-2 border-border bg-black">
       <video
         ref={videoRef}
-        src={videoUrl}
+        src={playbackUrl}
         poster={posterUrl ?? undefined}
         controls
         playsInline

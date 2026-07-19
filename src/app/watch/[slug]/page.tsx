@@ -8,6 +8,7 @@ import {
 } from "@/lib/course-access";
 import { ContentViewer } from "@/components/video/ContentViewer";
 import { getContentTypeLabel, isVideoContent } from "@/lib/content-types";
+import { WatchLessonExtras } from "@/components/offline/WatchLessonExtras";
 
 interface WatchPageProps {
   params: Promise<{ slug: string }>;
@@ -44,9 +45,10 @@ export default async function WatchPage({ params, searchParams }: WatchPageProps
 
   const maxWatchSeconds = getMaxWatchSeconds(hasPurchased, currentLesson.isFree);
   const durationMin = Math.max(1, Math.floor(currentLesson.duration / 60));
+  const hasFullAccess = maxWatchSeconds === null;
 
   let initialWatchedSec = 0;
-  if (user && maxWatchSeconds === null) {
+  if (user && hasFullAccess) {
     const progress = await prisma.lessonProgress.findUnique({
       where: {
         userId_lessonId: {
@@ -59,7 +61,11 @@ export default async function WatchPage({ params, searchParams }: WatchPageProps
   }
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-10">
+      <p className="text-xs font-semibold uppercase tracking-[.14em] text-primary-deep">
+        Lecture
+      </p>
+
       {currentLesson.videoUrl ? (
         <ContentViewer
           contentType={currentLesson.contentType}
@@ -74,7 +80,7 @@ export default async function WatchPage({ params, searchParams }: WatchPageProps
           initialWatchedSec={initialWatchedSec}
         />
       ) : (
-        <div className="relative aspect-video overflow-hidden rounded-2xl bg-black">
+        <div className="relative aspect-video overflow-hidden border-2 border-border bg-black">
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 text-white">
             <p className="text-xl font-semibold">{currentLesson.title}</p>
             <p className="mt-2 text-sm text-white/70">
@@ -84,29 +90,39 @@ export default async function WatchPage({ params, searchParams }: WatchPageProps
         </div>
       )}
 
-      <div className="mt-6 flex flex-wrap items-start justify-between gap-4">
+      <div className="mt-6 flex flex-col gap-4 border-b-2 border-border pb-6 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold">{currentLesson.title}</h1>
-          <p className="mt-1 text-sm text-muted">
+          <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">
+            {currentLesson.title}
+          </h1>
+          <p className="mt-2 text-sm text-muted">
             {course.title} · {course.teacher.user.firstName}{" "}
             {course.teacher.user.lastName} · {durationMin} min
           </p>
           {maxWatchSeconds !== null && isVideoContent(currentLesson.contentType) && (
-            <p className="mt-2 text-sm text-primary">
+            <p className="mt-2 text-sm text-primary-deep">
               Aperçu gratuit limité à 1 minute — achetez le cours pour voir la suite
             </p>
           )}
         </div>
-        <Link
-          href={`/courses/${course.slug}`}
-          className="rounded-lg border border-border px-4 py-2 text-sm font-medium transition hover:border-primary hover:text-primary"
-        >
-          ← Retour au cours
-        </Link>
+
+        {user && hasFullAccess && (
+          <WatchLessonExtras
+            lessonId={currentLesson.id}
+            courseSlug={course.slug}
+            lessonSlug={currentLesson.slug}
+            lessonTitle={currentLesson.title}
+            contentType={currentLesson.contentType}
+            hasAccess={hasFullAccess}
+            hasVideo={Boolean(currentLesson.videoUrl)}
+          />
+        )}
       </div>
 
-      <h2 className="mt-10 text-lg font-semibold">Leçons</h2>
-      <div className="mt-4 space-y-2">
+      <h2 className="mt-10 text-xs font-semibold uppercase tracking-[.14em] text-primary-deep">
+        Leçons du cours
+      </h2>
+      <div className="mt-4 divide-y divide-border-soft border-2 border-border">
         {course.lessons.map((lesson, i) => {
           const active = lesson.id === currentLesson.id;
           const locked = !hasPurchased && !lesson.isFree;
@@ -115,15 +131,13 @@ export default async function WatchPage({ params, searchParams }: WatchPageProps
             <Link
               key={lesson.id}
               href={`/watch/${course.slug}?lesson=${lesson.slug}`}
-              className={`flex items-center gap-3 rounded-xl border px-4 py-3 transition ${
-                active
-                  ? "border-primary bg-primary/5"
-                  : "border-border bg-card hover:border-primary/30"
+              className={`flex items-center gap-3 px-4 py-3 transition ${
+                active ? "bg-primary/5" : "bg-card hover:bg-background"
               }`}
             >
               <span
-                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-medium ${
-                  active ? "bg-primary text-white" : "bg-primary/10 text-primary"
+                className={`flex h-8 w-8 shrink-0 items-center justify-center text-sm font-semibold ${
+                  active ? "bg-primary text-background" : "bg-primary/10 text-primary-deep"
                 }`}
               >
                 {i + 1}

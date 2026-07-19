@@ -5,6 +5,7 @@ import { Readable } from "stream";
 import { NextRequest, NextResponse } from "next/server";
 import { getPublicUploadsDir } from "@/lib/uploads-dir";
 import { getMediaMimeType } from "@/lib/media-types";
+import { checkUploadMediaAccess } from "@/lib/media-access";
 
 export const runtime = "nodejs";
 
@@ -24,6 +25,11 @@ export async function GET(
   const filename = safeFilename(rawFilename);
   if (!filename) {
     return NextResponse.json({ error: "Fichier introuvable" }, { status: 404 });
+  }
+
+  const access = await checkUploadMediaAccess(filename);
+  if (!access.allowed) {
+    return NextResponse.json({ error: access.message }, { status: access.status });
   }
 
   const filePath = path.join(getPublicUploadsDir(), filename);

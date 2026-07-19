@@ -119,9 +119,7 @@ export default async function AccountPage() {
       </section>
 
       <section className="mt-6 rounded-2xl border border-border bg-card p-6">
-        <h2 className="text-lg font-semibold">
-          Mes appareils ({devices.length}/2)
-        </h2>
+        <h2 className="text-lg font-semibold">Mes appareils ({devices.length})</h2>
         <div className="mt-4">
           <DeviceList
             devices={devices.map((d: (typeof devices)[number]) => ({

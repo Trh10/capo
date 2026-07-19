@@ -5,7 +5,6 @@ import {
   verifyPassword,
   registerDevice,
   generateDeviceFingerprint,
-  DeviceLimitError,
 } from "@/lib/devices";
 import { loginSchema } from "@/lib/validations";
 import { DeviceType } from "@prisma/client";
@@ -43,19 +42,12 @@ export async function POST(request: NextRequest) {
     const userAgent = request.headers.get("user-agent") || "unknown";
     const fingerprint = generateDeviceFingerprint(userAgent, deviceType || "WEB");
 
-    try {
-      await registerDevice(
-        user.id,
-        fingerprint,
-        deviceName || "Navigateur web",
-        (deviceType as DeviceType) || "WEB"
-      );
-    } catch (error) {
-      if (error instanceof DeviceLimitError) {
-        return NextResponse.json({ error: error.message }, { status: 403 });
-      }
-      throw error;
-    }
+    await registerDevice(
+      user.id,
+      fingerprint,
+      deviceName || "Navigateur web",
+      (deviceType as DeviceType) || "WEB"
+    );
 
     await createSession({
       userId: user.id,

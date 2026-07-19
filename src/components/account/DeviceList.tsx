@@ -57,8 +57,10 @@ export function DeviceList({ devices }: { devices: Device[] }) {
         <p className="text-sm text-muted">Aucun appareil enregistré.</p>
       )}
       <p className="text-xs text-muted">
-        Maximum 2 appareils par compte. Les téléchargements offline sont liés à
-        chaque appareil.
+        Plusieurs appareils peuvent se connecter pour regarder vos cours en
+        ligne. Le téléchargement offline est limité à un seul appareil par
+        leçon : si une vidéo est déjà téléchargée sur un téléphone, elle ne
+        pourra pas être retéléchargée ailleurs sur le même compte.
       </p>
     </div>
   );

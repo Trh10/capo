@@ -1,9 +1,11 @@
 import bcrypt from "bcryptjs";
-import { DeviceType } from "@prisma/client";
+import { DeviceType, DownloadStatus } from "@prisma/client";
 import { prisma } from "./prisma";
 
-export const MAX_DEVICES = 2;
+/** Connexion : pas de limite — plusieurs appareils peuvent regarder en ligne. */
+export const MAX_DEVICES = null;
 
+/** Téléchargement offline : une leçon = un seul appareil par compte. */
 export async function hashPassword(password: string) {
   return bcrypt.hash(password, 12);
 }
@@ -25,14 +27,8 @@ export async function registerDevice(
   if (existing) {
     return prisma.device.update({
       where: { id: existing.id },
-      data: { lastActiveAt: new Date(), name },
+      data: { lastActiveAt: new Date(), name, type },
     });
-  }
-
-  const deviceCount = await prisma.device.count({ where: { userId } });
-
-  if (deviceCount >= MAX_DEVICES) {
-    throw new DeviceLimitError();
   }
 
   return prisma.device.create({
@@ -64,13 +60,37 @@ export async function removeDevice(userId: string, deviceId: string) {
   return prisma.device.delete({ where: { id: deviceId } });
 }
 
-export class DeviceLimitError extends Error {
-  constructor() {
-    super(
-      `Limite de ${MAX_DEVICES} appareils atteinte. Déconnectez un appareil pour continuer.`
-    );
-    this.name = "DeviceLimitError";
+/**
+ * Règle anti-partage de compte pour le offline :
+ * une leçon achetée ne peut être téléchargée que sur UN appareil du compte.
+ * Les autres appareils peuvent regarder en streaming.
+ */
+export async function canDownloadLessonOnDevice(
+  userId: string,
+  lessonId: string,
+  deviceId: string
+): Promise<{ allowed: boolean; reason?: string }> {
+  const activeStatuses: DownloadStatus[] = ["PENDING", "READY"];
+
+  const onOtherDevice = await prisma.download.findFirst({
+    where: {
+      userId,
+      lessonId,
+      deviceId: { not: deviceId },
+      status: { in: activeStatuses },
+    },
+    include: { device: { select: { name: true } } },
+  });
+
+  if (onOtherDevice) {
+    const label = onOtherDevice.device.name || "un autre appareil";
+    return {
+      allowed: false,
+      reason: `Cette leçon a déjà été téléchargée sur « ${label} ». Vous pouvez la regarder en ligne, mais pas la retélécharger ici.`,
+    };
   }
+
+  return { allowed: true };
 }
 
 export function generateDeviceFingerprint(

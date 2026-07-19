@@ -1,36 +1,28 @@
-import Image from "next/image";
 import Link from "next/link";
 
 type LogoVariant = "primary" | "red" | "onDark" | "icon";
 
 const LOGOS: Record<
   LogoVariant,
-  { src: string; width: number; height: number; className?: string }
+  { src: string; aspectRatio: number; className?: string }
 > = {
-  /** Fond blanc — header, pages claires */
+  /** Texte foncé, fond transparent — header, pages claires */
   primary: {
-    src: "/branding/logo-capo-primary.png",
-    width: 148,
-    height: 40,
+    src: "/branding/logo-capo-primary.svg",
+    aspectRatio: 595.28 / 205.28,
   },
-  /** Fond rouge — hero, sections accent */
+  /** Texte blanc, fond transparent — footer, bandeaux rouges/noirs */
   red: {
-    src: "/branding/logo-capo-red.png",
-    width: 148,
-    height: 40,
+    src: "/branding/logo-capo-on-dark.svg",
+    aspectRatio: 595.28 / 205.28,
   },
-  /** Texte blanc sur fond sombre — footer, bandeaux noirs */
   onDark: {
-    src: "/branding/logo-capo-light.png",
-    width: 148,
-    height: 40,
+    src: "/branding/logo-capo-on-dark.svg",
+    aspectRatio: 595.28 / 205.28,
   },
-  /** Icône seule — favicon, placeholders */
   icon: {
-    src: "/branding/logo-capo-icon.png",
-    width: 40,
-    height: 40,
-    className: "",
+    src: "/branding/logo-capo-icon.svg",
+    aspectRatio: 1,
   },
 };
 
@@ -48,15 +40,21 @@ export function Logo({
   priority = false,
 }: LogoProps) {
   const logo = LOGOS[variant];
+  const isIcon = variant === "icon";
 
   const image = (
-    <Image
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
       src={logo.src}
       alt="CAPO Studio"
-      width={logo.width}
-      height={logo.height}
-      priority={priority}
-      className={`h-8 w-auto sm:h-9 ${logo.className ?? ""} ${className}`}
+      width={isIcon ? 40 : 148}
+      height={isIcon ? 40 : Math.round(148 / logo.aspectRatio)}
+      fetchPriority={priority ? "high" : undefined}
+      className={
+        isIcon
+          ? `h-9 w-9 sm:h-10 sm:w-10 ${logo.className ?? ""} ${className}`
+          : `h-8 w-auto sm:h-9 ${logo.className ?? ""} ${className}`
+      }
     />
   );
 

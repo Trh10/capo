@@ -107,6 +107,7 @@ async function main() {
     { key: "NEXT_PUBLIC_APP_URL", value: process.env.NEXT_PUBLIC_APP_URL || "http://51.255.200.11:3002" },
     { key: "CAPO_PORT", value: "3002" },
     { key: "SEED_DB", value: "true" },
+    { key: "UPLOADS_DIR", value: "/data/capo-uploads" },
   ];
 
   console.log("==> Variables d'environnement...");

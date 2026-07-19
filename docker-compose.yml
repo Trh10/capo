@@ -35,11 +35,12 @@ services:
       NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://51.255.200.11:3002}
       NODE_ENV: production
       SEED_DB: ${SEED_DB:-true}
+      UPLOADS_DIR: /data/capo-uploads
       STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-}
       STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-}
       NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY:-}
     volumes:
-      - capo_uploads:/app/public/uploads
+      - capo_uploads:/data/capo-uploads
     ports:
       - "${CAPO_PORT:-3002}:3000"
     networks:

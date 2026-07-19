@@ -15,14 +15,6 @@ try {
   node scripts/prepare.mjs
   npx cap sync android
 
-  $dirs = @("mdpi", "hdpi", "xhdpi", "xxhdpi", "xxxhdpi")
-  foreach ($d in $dirs) {
-    $p = "android\app\src\main\res\mipmap-$d"
-    New-Item -ItemType Directory -Force -Path $p | Out-Null
-    Copy-Item "www\icon.png" "$p\ic_launcher.png" -Force
-    Copy-Item "www\icon.png" "$p\ic_launcher_round.png" -Force
-  }
-
   Push-Location android
   .\gradlew.bat assembleDebug --no-daemon
   Pop-Location

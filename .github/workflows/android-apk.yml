@@ -65,14 +65,6 @@ jobs:
       - name: Sync Capacitor
         run: npx cap sync android
 
-      - name: Generate launcher icons
-        run: |
-          for dir in mdpi hdpi xhdpi xxhdpi xxxhdpi; do
-            mkdir -p "android/app/src/main/res/mipmap-$dir"
-            cp www/icon.png "android/app/src/main/res/mipmap-$dir/ic_launcher.png"
-            cp www/icon.png "android/app/src/main/res/mipmap-$dir/ic_launcher_round.png"
-          done
-
       - name: Build debug APK
         run: |
           cd android

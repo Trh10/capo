@@ -1,20 +1,15 @@
-import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
+import { spawnSync } from "child_process";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const mobileRoot = join(__dirname, "..");
-const repoRoot = join(mobileRoot, "..");
 
-const iconSrc = join(repoRoot, "logos", "logos", "flavicon app.png");
-const iconDst = join(mobileRoot, "www", "icon.png");
-
-if (existsSync(iconSrc)) {
-  copyFileSync(iconSrc, iconDst);
-  console.log("Icône copiée vers mobile/www/icon.png");
-} else if (!existsSync(iconDst)) {
-  console.warn("Icône introuvable:", iconSrc);
-}
+spawnSync("node", ["scripts/generate-icons.mjs"], {
+  cwd: mobileRoot,
+  stdio: "inherit",
+});
 
 const manifestPath = join(mobileRoot, "android", "app", "src", "main", "AndroidManifest.xml");
 if (!existsSync(manifestPath)) {

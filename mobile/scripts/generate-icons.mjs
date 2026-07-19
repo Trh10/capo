@@ -1,5 +1,5 @@
 import sharp from "sharp";
-import { copyFileSync, existsSync, mkdirSync, rmSync, writeFileSync } from "fs";
+import { existsSync, mkdirSync, rmSync, writeFileSync } from "fs";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 
@@ -25,13 +25,70 @@ if (!existsSync(androidRes)) {
   process.exit(1);
 }
 
+// Logo recadré (sans grandes marges noires)
+const trimmedLogo = await sharp(iconSrc)
+  .trim({ threshold: 15 })
+  .png()
+  .toBuffer();
+
 console.log("Source icône:", iconSrc);
+
+/** Zone sûre adaptive icon Android : ~66 % du centre → logo à ~50 % max */
+const ADAPTIVE_LOGO_RATIO = 0.5;
+/** Icône legacy carrée : un peu plus grand */
+const LEGACY_LOGO_RATIO = 0.82;
+const BG_COLOR = "#000000";
+
+async function writeLegacyIcon(outputPath, canvasSize) {
+  const logoSize = Math.round(canvasSize * LEGACY_LOGO_RATIO);
+  const logo = await sharp(trimmedLogo)
+    .resize(logoSize, logoSize, {
+      fit: "contain",
+      background: { r: 0, g: 0, b: 0, alpha: 0 },
+    })
+    .png()
+    .toBuffer();
+
+  await sharp({
+    create: {
+      width: canvasSize,
+      height: canvasSize,
+      channels: 4,
+      background: BG_COLOR,
+    },
+  })
+    .composite([{ input: logo, gravity: "center" }])
+    .png()
+    .toFile(outputPath);
+}
+
+async function writeAdaptiveForeground(outputPath, canvasSize) {
+  const logoSize = Math.round(canvasSize * ADAPTIVE_LOGO_RATIO);
+  const logo = await sharp(trimmedLogo)
+    .resize(logoSize, logoSize, {
+      fit: "contain",
+      background: { r: 0, g: 0, b: 0, alpha: 0 },
+    })
+    .png()
+    .toBuffer();
+
+  await sharp({
+    create: {
+      width: canvasSize,
+      height: canvasSize,
+      channels: 4,
+      background: { r: 0, g: 0, b: 0, alpha: 0 },
+    },
+  })
+    .composite([{ input: logo, gravity: "center" }])
+    .png()
+    .toFile(outputPath);
+}
 
 // Icône web Capacitor
 const wwwIcon = join(mobileRoot, "www", "icon.png");
-await sharp(iconSrc).resize(512, 512, { fit: "contain", background: "#201E1D" }).png().toFile(wwwIcon);
+await writeLegacyIcon(wwwIcon, 512);
 
-// Tailles legacy Android (utilisées si pas d'adaptive icon)
 const LAUNCHER_SIZES = {
   mdpi: 48,
   hdpi: 72,
@@ -40,7 +97,6 @@ const LAUNCHER_SIZES = {
   xxxhdpi: 192,
 };
 
-// Tailles adaptive foreground (Android 8+)
 const FOREGROUND_SIZES = {
   mdpi: 108,
   hdpi: 162,
@@ -49,30 +105,26 @@ const FOREGROUND_SIZES = {
   xxxhdpi: 432,
 };
 
-async function writeIcon(outputPath, size) {
-  await sharp(iconSrc)
-    .resize(size, size, { fit: "contain", background: "#201E1D" })
-    .png()
-    .toFile(outputPath);
-}
-
 for (const [density, size] of Object.entries(LAUNCHER_SIZES)) {
   const dir = join(androidRes, `mipmap-${density}`);
   mkdirSync(dir, { recursive: true });
-  await writeIcon(join(dir, "ic_launcher.png"), size);
-  await writeIcon(join(dir, "ic_launcher_round.png"), size);
-  const fgSize = FOREGROUND_SIZES[density];
-  await writeIcon(join(dir, "ic_launcher_foreground.png"), fgSize);
+  await writeLegacyIcon(join(dir, "ic_launcher.png"), size);
+  await writeLegacyIcon(join(dir, "ic_launcher_round.png"), size);
+  await writeAdaptiveForeground(
+    join(dir, "ic_launcher_foreground.png"),
+    FOREGROUND_SIZES[density]
+  );
 }
 
-// Supprimer l'icône vectorielle Capacitor (X bleu) qui prend le dessus
-const vectorForeground = join(androidRes, "drawable-v24", "ic_launcher_foreground.xml");
+const vectorForeground = join(
+  androidRes,
+  "drawable-v24",
+  "ic_launcher_foreground.xml"
+);
 if (existsSync(vectorForeground)) {
   rmSync(vectorForeground);
-  console.log("Supprimé: drawable-v24/ic_launcher_foreground.xml");
 }
 
-// Adaptive icon : logo CAPO sur fond sombre
 const anydpiDir = join(androidRes, "mipmap-anydpi-v26");
 mkdirSync(anydpiDir, { recursive: true });
 writeFileSync(
@@ -98,12 +150,12 @@ writeFileSync(
   join(androidRes, "values", "ic_launcher_background.xml"),
   `<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="ic_launcher_background">#201E1D</color>
+    <color name="ic_launcher_background">#000000</color>
 </resources>
 `
 );
 
-// Splash CAPO
+// Splash
 const SPLASH_SIZES = {
   "drawable-port-mdpi": 320,
   "drawable-port-hdpi": 480,
@@ -121,23 +173,30 @@ const SPLASH_SIZES = {
 for (const [folder, width] of Object.entries(SPLASH_SIZES)) {
   const dir = join(androidRes, folder);
   mkdirSync(dir, { recursive: true });
-  const logoSize = Math.round(width * 0.35);
-  const splash = sharp({
+  const height = folder.includes("land")
+    ? Math.round(width * 0.625)
+    : Math.round(width * 1.778);
+  const logoSize = Math.round(Math.min(width, height) * 0.28);
+  const logo = await sharp(trimmedLogo)
+    .resize(logoSize, logoSize, {
+      fit: "contain",
+      background: { r: 0, g: 0, b: 0, alpha: 0 },
+    })
+    .png()
+    .toBuffer();
+  await sharp({
     create: {
       width,
-      height: folder.includes("land") ? Math.round(width * 0.625) : Math.round(width * 1.778),
+      height,
       channels: 4,
       background: "#F8F4F4",
     },
-  });
-  const logo = await sharp(iconSrc)
-    .resize(logoSize, logoSize, { fit: "contain", background: { r: 0, g: 0, b: 0, alpha: 0 } })
-    .png()
-    .toBuffer();
-  await splash
+  })
     .composite([{ input: logo, gravity: "center" }])
     .png()
     .toFile(join(dir, "splash.png"));
 }
 
-console.log("Icônes CAPO générées (tailles Android correctes).");
+console.log(
+  "Icônes CAPO générées avec marge safe-zone (50 % adaptive, 82 % legacy)."
+);

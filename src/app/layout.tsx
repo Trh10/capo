@@ -3,7 +3,8 @@ import { Archivo } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-
+import { MobileNavProvider } from "@/components/mobile/MobileNavProvider";
+import { MobileBackBar } from "@/components/mobile/MobileBackBar";
 const archivo = Archivo({
   variable: "--font-archivo",
   subsets: ["latin"],
@@ -41,10 +42,12 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body className={`${archivo.variable} antialiased`}>
-        <Header />
-        <main className="min-h-screen">{children}</main>
-        <Footer />
-      </body>
-    </html>
+        <MobileNavProvider>
+          <Header />
+          <MobileBackBar />
+          <main className="min-h-screen">{children}</main>
+          <Footer />
+        </MobileNavProvider>
+      </body>    </html>
   );
 }

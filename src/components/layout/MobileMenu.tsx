@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useMobileNav } from "@/components/mobile/MobileNavProvider";
 
 interface MobileMenuProps {
   user: {
@@ -13,7 +13,7 @@ interface MobileMenuProps {
 
 export function MobileMenu({ user }: MobileMenuProps) {
   const router = useRouter();
-  const [open, setOpen] = useState(false);
+  const { menuOpen: open, setMenuOpen: setOpen } = useMobileNav();
 
   const links = [
     { href: "/courses", label: "Cours" },

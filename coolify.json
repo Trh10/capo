@@ -1,0 +1,15 @@
+{
+  "version": "1.0",
+  "name": "capo-app",
+  "build": {
+    "type": "dockerfile",
+    "dockerfile_location": "/Dockerfile",
+    "install_command": null,
+    "build_command": null,
+    "start_command": null
+  },
+  "domains": {
+    "ports_exposes": "3000",
+    "ports_mappings": "3002:3000"
+  }
+}

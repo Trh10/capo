@@ -1,8 +1,10 @@
 [variables]
 NIXPACKS_NODE_VERSION = "20"
+NODE_OPTIONS = "--max-old-space-size=6144"
+NEXT_TELEMETRY_DISABLED = "1"
 
-# Préférer Dockerfile sur Coolify (build_pack = dockerfile).
-# Ce fichier sert de repli si Nixpacks est encore sélectionné.
+# Repli si Nixpacks est encore sélectionné dans Coolify.
+# Préférez Build Pack = Dockerfile dans Coolify (voir Dockerfile).
 
 [phases.setup]
 nixPkgs = ["nodejs_20", "openssl"]

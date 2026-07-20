@@ -14,3 +14,15 @@ public/uploads/*
 README.md
 .cursor
 assets
+mobile
+logos
+_design-import
+node_modules.bak
+.github
+scripts/coolify-*.mjs
+scripts/vps-*.mjs
+scripts/deploy-*.mjs
+scripts/check-vps.mjs
+scripts/push-github.mjs
+*.md
+!README.md

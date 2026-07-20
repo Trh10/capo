@@ -18,6 +18,15 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "5gb",
     },
     middlewareClientMaxBodySize: "5gb",
+    outputFileTracingExcludes: {
+      "*": [
+        "./mobile/**",
+        "./logos/**",
+        "./_design-import/**",
+        "./node_modules.bak/**",
+        "./scripts/coolify-*.mjs",
+      ],
+    },
   },
   images: {
     remotePatterns: [

@@ -1,3 +1,5 @@
+# CAPO — Coolify : Build Pack = "Dockerfile" (PAS Nixpacks)
+# Laisser Build / Install / Start commands vides dans Coolify.
 FROM node:20-alpine AS deps
 RUN apk add --no-cache libc6-compat openssl
 WORKDIR /app
@@ -13,6 +15,7 @@ COPY . .
 ARG NEXT_PUBLIC_APP_URL=http://51.255.200.11:3002
 ENV NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL}
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_OPTIONS=--max-old-space-size=6144
 
 RUN npx prisma generate
 RUN npm run build

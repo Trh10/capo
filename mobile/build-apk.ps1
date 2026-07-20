@@ -1,14 +1,14 @@
 # Build CAPO Studio APK (debug) — données prod en ligne
 $ErrorActionPreference = "Stop"
-$root = Split-Path -Parent $PSScriptRoot
-$mobile = $root
-
+$mobile = $PSScriptRoot
 $env:ANDROID_HOME = "$env:LOCALAPPDATA\Android\Sdk"
 $env:ANDROID_SDK_ROOT = $env:ANDROID_HOME
 
 Push-Location $mobile
 try {
   npm install
+  node scripts/copy-splash.mjs
+  node scripts/inject-config.mjs
   if (-not (Test-Path "android")) {
     npx cap add android
   }

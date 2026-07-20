@@ -4,42 +4,186 @@
     <meta charset="UTF-8" />
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover, user-scalable=no"
     />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#000000" />
     <title>CAPO Studio</title>
     <style>
       * {
         box-sizing: border-box;
       }
+
+      html,
       body {
         margin: 0;
-        min-height: 100vh;
-        display: grid;
-        place-items: center;
-        font-family: system-ui, sans-serif;
-        background: #f8f4f4;
-        color: #201e1d;
+        height: 100%;
+        overflow: hidden;
+        background: #000;
       }
-      .wrap {
-        text-align: center;
-        padding: 2rem;
+
+      #splash {
+        position: fixed;
+        inset: 0;
+        background: #000;
+        opacity: 1;
+        transition: opacity 0.25s ease;
       }
-      .logo {
-        width: 72px;
-        height: 72px;
-        margin: 0 auto 1rem;
+
+      #splash.fade-out {
+        opacity: 0;
       }
-      p {
-        margin: 0;
-        color: #6b6462;
-        font-size: 0.95rem;
+
+      #intro {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        background: #000;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      #intro.visible {
+        opacity: 1;
       }
     </style>
+    <script src="config.js"></script>
   </head>
   <body>
-    <div class="wrap">
-      <img class="logo" src="icon.png" alt="CAPO Studio" />
-      <p>Chargement de CAPO Studio…</p>
+    <div id="splash">
+      <video
+        id="intro"
+        src="splash.mp4"
+        autoplay
+        muted
+        playsinline
+        webkit-playsinline
+        x5-playsinline
+        disablepictureinpicture
+        disableremoteplayback
+        preload="auto"
+        poster="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+      ></video>
     </div>
+
+    <script>
+      (function hideNativeSplash() {
+        var cap = window.Capacitor;
+        if (!cap || !cap.isNativePlatform || !cap.isNativePlatform()) return;
+        var splash = cap.Plugins && cap.Plugins.SplashScreen;
+        if (splash && splash.hide) splash.hide();
+      })();
+
+      (function () {
+        var PROD_URL =
+          (window.CAPO_APP_URL && String(window.CAPO_APP_URL)) ||
+          "http://t13kzxjdw7jzvip57w31g0oq.51.255.200.11.sslip.io";
+        var FALLBACK_URL =
+          (window.CAPO_APP_URL_FALLBACK &&
+            String(window.CAPO_APP_URL_FALLBACK)) ||
+          "http://51.255.200.11:3002";
+
+        if (!/^https?:\/\//i.test(PROD_URL)) {
+          PROD_URL = "http://" + PROD_URL;
+        }
+        if (!/^https?:\/\//i.test(FALLBACK_URL)) {
+          FALLBACK_URL = "http://" + FALLBACK_URL;
+        }
+
+        var video = document.getElementById("intro");
+        var splash = document.getElementById("splash");
+        var finished = false;
+        var revealed = false;
+
+        function ping(url) {
+          return new Promise(function (resolve) {
+            var done = false;
+            var img = new Image();
+            function finish(ok) {
+              if (done) return;
+              done = true;
+              resolve(ok);
+            }
+            img.onload = function () {
+              finish(true);
+            };
+            img.onerror = function () {
+              finish(false);
+            };
+            img.src =
+              url.replace(/\/$/, "") + "/favicon.ico?_=" + Date.now();
+            setTimeout(function () {
+              finish(false);
+            }, 3500);
+          });
+        }
+
+        function resolveAppUrl() {
+          var primary = PROD_URL.replace(/\/$/, "");
+          var fallback = FALLBACK_URL.replace(/\/$/, "");
+          return ping(primary).then(function (ok) {
+            if (ok) return primary;
+            return ping(fallback).then(function (ok2) {
+              return ok2 ? fallback : primary;
+            });
+          });
+        }
+
+        function openApp() {
+          if (finished) return;
+          finished = true;
+          splash.classList.add("fade-out");
+          resolveAppUrl().then(function (url) {
+            setTimeout(function () {
+              window.location.href = url + "/";
+            }, 200);
+          });
+        }
+
+        function revealVideo() {
+          if (revealed) return;
+          revealed = true;
+          video.classList.add("visible");
+        }
+
+        function startPlayback() {
+          video.muted = true;
+          return video
+            .play()
+            .then(function () {
+              revealVideo();
+              try {
+                video.muted = false;
+              } catch (e) {}
+            })
+            .catch(function () {
+              revealVideo();
+              return video.play();
+            })
+            .catch(openApp);
+        }
+
+        video.addEventListener("ended", openApp);
+        video.addEventListener("error", openApp);
+        video.addEventListener("playing", revealVideo);
+
+        video.addEventListener(
+          "loadeddata",
+          function onLoaded() {
+            video.removeEventListener("loadeddata", onLoaded);
+            startPlayback();
+          },
+          { once: true }
+        );
+
+        video.load();
+
+        setTimeout(function () {
+          if (!finished && video.paused) startPlayback();
+        }, 100);
+
+        setTimeout(openApp, 20000);
+      })();
+    </script>
   </body>
 </html>

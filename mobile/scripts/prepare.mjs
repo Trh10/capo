@@ -25,6 +25,11 @@ writeFileSync(
   join(networkConfigDir, "network_security_config.xml"),
   `<?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
+  <base-config cleartextTrafficPermitted="true">
+    <trust-anchors>
+      <certificates src="system" />
+    </trust-anchors>
+  </base-config>
   <domain-config cleartextTrafficPermitted="true">
     <domain includeSubdomains="true">51.255.200.11.sslip.io</domain>
     <domain includeSubdomains="true">51.255.200.11</domain>

@@ -1,9 +1,15 @@
 # APK Android CAPO Studio
 
-Application Android légère (Capacitor) qui ouvre le **site CAPO en production** dans une WebView native. Vous testez donc avec les **vraies données en ligne** : comptes, cours, uploads, etc.
+Application Android (Capacitor) avec **vidéo d’intro au lancement**, puis ouverture du **site CAPO en production** dans une WebView.
+
+## Démarrage de l’app
+
+1. Clic sur l’icône → **vidéo intro** en plein écran (logo + animation de chargement intégrée à la vidéo)
+2. **Quand la vidéo se termine** → ouverture automatique de l’interface CAPO
+
+La vidéo source : `Downloads/Retrait Fmonie agent.mp4` (copiée automatiquement au build).
 
 ## URL connectée
-
 ```
 http://t13kzxjdw7jzvip57w31g0oq.51.255.200.11.sslip.io
 ```

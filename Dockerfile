@@ -9,7 +9,11 @@ RUN apk add --no-cache libc6-compat openssl
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+
+ARG NEXT_PUBLIC_APP_URL=http://51.255.200.11:3002
+ENV NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL}
 ENV NEXT_TELEMETRY_DISABLED=1
+
 RUN npx prisma generate
 RUN npm run build
 
@@ -37,5 +41,8 @@ COPY --from=builder /app/scripts/start-production.sh ./scripts/start-production.
 RUN chmod +x ./scripts/start-production.sh
 
 EXPOSE 3000
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
+  CMD wget -qO- http://127.0.0.1:3000/ >/dev/null 2>&1 || exit 1
 
 CMD ["sh", "scripts/start-production.sh"]

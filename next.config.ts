@@ -18,8 +18,6 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "5gb",
     },
     middlewareClientMaxBodySize: "5gb",
-    // Next.js 15.5+ — absent des types officiels, requis pour les gros uploads
-    ...({ proxyClientMaxBodySize: "5gb" } as Record<string, string>),
   },
   images: {
     remotePatterns: [

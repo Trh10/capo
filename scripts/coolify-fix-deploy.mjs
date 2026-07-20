@@ -1,12 +1,9 @@
 #!/usr/bin/env node
 /**
- * Corrige la config Coolify CAPO et lance un deploy fiable (Dockerfile).
- *
- * Prérequis : token API Coolify
- *   Coolify > Security > API Tokens > + Add
+ * Corrige la config Coolify CAPO (projet CAPO uniquement) et lance un deploy Dockerfile.
  *
  * Usage :
- *   $env:COOLIFY_TOKEN="votre_token"
+ *   $env:COOLIFY_TOKEN='...'
  *   node scripts/coolify-fix-deploy.mjs
  */
 const COOLIFY_URL = (process.env.COOLIFY_URL || "http://51.255.200.11:8000").replace(
@@ -14,7 +11,6 @@ const COOLIFY_URL = (process.env.COOLIFY_URL || "http://51.255.200.11:8000").rep
   ""
 );
 const COOLIFY_TOKEN = process.env.COOLIFY_TOKEN;
-/** UUID de capo-app (logs deploy Coolify) */
 const APP_UUID =
   process.env.COOLIFY_APP_UUID || "t13kzxjdw7jzvip57w31g0oq";
 const DB_UUID = process.env.COOLIFY_DB_UUID || "b9ov14gfcvc95uf0kpp3mvuj";
@@ -24,10 +20,10 @@ const SSLIP_DOMAIN =
   process.env.COOLIFY_SSLIP_DOMAIN ||
   "http://t13kzxjdw7jzvip57w31g0oq.51.255.200.11.sslip.io";
 
+const DB_HOST = process.env.COOLIFY_DB_HOST || "b9ov14gfcvc95uf0kpp3mvuj";
+
 if (!COOLIFY_TOKEN) {
   console.error("COOLIFY_TOKEN requis.");
-  console.error("Coolify > Security > API Tokens > + Add");
-  console.error('Puis : $env:COOLIFY_TOKEN="..." ; node scripts/coolify-fix-deploy.mjs');
   process.exit(1);
 }
 
@@ -56,77 +52,67 @@ async function api(method, path, body) {
   return data;
 }
 
-/** Variables : build-time uniquement si nécessaire au build Docker/Next */
-const ENV_SPECS = [
-  {
-    key: "DATABASE_URL",
-    value:
-      process.env.DATABASE_URL ||
-      "postgresql://capo:CapoDb2026Secure!@capo-db:5432/capo",
-    is_build_time: false,
-  },
-  {
-    key: "JWT_SECRET",
-    value: process.env.JWT_SECRET || "capo-jwt-prod-xK9mN2pQ7vR4sT8wL1yZ6",
-    is_build_time: false,
-  },
-  {
-    key: "NEXT_PUBLIC_APP_URL",
-    value: APP_URL,
-    is_build_time: true,
-  },
-  { key: "SEED_DB", value: "false", is_build_time: false },
-  { key: "NODE_ENV", value: "production", is_build_time: false },
-  { key: "UPLOADS_DIR", value: "/data/capo-uploads", is_build_time: false },
-  {
-    key: "STRIPE_SECRET_KEY",
-    value: process.env.STRIPE_SECRET_KEY || "",
-    is_build_time: false,
-  },
-  {
-    key: "STRIPE_WEBHOOK_SECRET",
-    value: process.env.STRIPE_WEBHOOK_SECRET || "",
-    is_build_time: false,
-  },
-  {
-    key: "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY",
-    value: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "",
-    is_build_time: true,
-  },
-];
-
-async function upsertEnv(appUuid, spec) {
+async function syncEnvs(appUuid) {
   const existing = await api("GET", `/applications/${appUuid}/envs`);
-  const found = existing.find((e) => e.key === spec.key);
-  const body = {
-    key: spec.key,
-    value: spec.value,
-    is_preview: false,
-    is_build_time: spec.is_build_time,
-    is_literal: true,
+  const prod = existing.filter((e) => !e.is_preview);
+
+  const values = {
+    DATABASE_URL:
+      process.env.DATABASE_URL ||
+      `postgresql://capo:CapoDb2026Secure!@${DB_HOST}:5432/capo`,
+    JWT_SECRET:
+      process.env.JWT_SECRET || "capo-jwt-prod-xK9mN2pQ7vR4sT8wL1yZ6",
+    NEXT_PUBLIC_APP_URL: APP_URL,
+    SEED_DB: "false",
+    NODE_ENV: "production",
+    UPLOADS_DIR: "/data/capo-uploads",
   };
 
-  if (found?.uuid) {
-    await api("PATCH", `/applications/${appUuid}/envs/${found.uuid}`, body);
-    console.log(`  env PATCH ${spec.key} (build=${spec.is_build_time})`);
-  } else {
-    await api("POST", `/applications/${appUuid}/envs`, body);
-    console.log(`  env POST ${spec.key} (build=${spec.is_build_time})`);
+  const buildtimeKeys = new Set(["NEXT_PUBLIC_APP_URL"]);
+
+  const data = prod
+    .filter((e) => values[e.key] !== undefined || e.key === "NIXPACKS_NODE_VERSION")
+    .map((e) => {
+      if (e.key === "NIXPACKS_NODE_VERSION") {
+        return null;
+      }
+      return {
+        uuid: e.uuid,
+        key: e.key,
+        value: values[e.key],
+        is_preview: false,
+        is_runtime: true,
+        is_buildtime: buildtimeKeys.has(e.key),
+        is_literal: true,
+      };
+    })
+    .filter(Boolean);
+
+  if (data.length === 0) {
+    console.log("  aucune variable prod a synchroniser");
+    return;
+  }
+
+  await api("PATCH", `/applications/${appUuid}/envs/bulk`, { data });
+  for (const row of data) {
+    console.log(`  env ${row.key} (build=${row.is_buildtime})`);
   }
 }
 
 async function waitDeploy(deploymentUuid, appUuid) {
-  for (let i = 1; i <= 60; i++) {
+  for (let i = 1; i <= 80; i++) {
     await new Promise((r) => setTimeout(r, 15000));
     const d = await api("GET", `/deployments/${deploymentUuid}`);
     const app = await api("GET", `/applications/${appUuid}`);
-    console.log(`[${i}] deploy=${d.status} app=${app.status}`);
+    console.log(
+      `[${i}] deploy=${d.status} commit=${(d.commit || "").slice(0, 8)} app=${app.status}`
+    );
     if (d.status === "finished") {
       console.log("\nDeploy SUCCESS");
       return true;
     }
     if (d.status === "failed") {
-      console.error("\nDeploy FAILED — voir Coolify > Logs");
+      console.error("\nDeploy FAILED — voir Coolify > Deployments > logs");
       return false;
     }
   }
@@ -135,70 +121,54 @@ async function waitDeploy(deploymentUuid, appUuid) {
 }
 
 async function main() {
-  console.log("==> Sante API Coolify...");
+  console.log("==> CAPO uniquement :", APP_UUID);
   await api("GET", "/health");
 
-  console.log("==> Application", APP_UUID);
   const app = await api("GET", `/applications/${APP_UUID}`);
-  console.log("   nom:", app.name, "| statut:", app.status);
+  if (app.name !== "capo-app" || app.git_repository !== "Trh10/capo") {
+    throw new Error("Refus : ce UUID ne correspond pas a capo-app");
+  }
+  console.log("   statut actuel:", app.status);
 
-  console.log("==> Passage Dockerfile (build fiable)...");
+  console.log("==> Dockerfile + options...");
   await api("PATCH", `/applications/${APP_UUID}`, {
     build_pack: "dockerfile",
     dockerfile_location: "/Dockerfile",
+    install_command: "",
+    build_command: "",
+    start_command: "",
     is_static: false,
     publish_directory: null,
-    install_command: null,
-    build_command: null,
-    start_command: null,
     ports_exposes: "3000",
     ports_mappings: "3002:3000",
     domains: `${APP_URL},${SSLIP_DOMAIN}`,
     health_check_enabled: true,
     health_check_path: "/",
     health_check_port: "3000",
-    health_check_start_period: 90,
-    health_check_retries: 10,
-    health_check_interval: 15,
+    health_check_start_period: 120,
+    health_check_retries: 15,
+    health_check_interval: 10,
     git_branch: "main",
-    instant_deploy: false,
+    custom_docker_run_options: "",
   });
 
-  console.log("==> Variables d'environnement...");
-  for (const spec of ENV_SPECS) {
-    try {
-      await upsertEnv(APP_UUID, spec);
-    } catch (e) {
-      console.warn("  env", spec.key, ":", e.message);
-    }
-  }
+  console.log("==> Variables prod...");
+  await syncEnvs(APP_UUID);
 
-  console.log("==> Demarrage PostgreSQL capo-db...");
-  try {
-    await fetch(`${COOLIFY_URL}/api/v1/databases/${DB_UUID}/start`, { headers });
-  } catch (e) {
-    console.warn("  DB start:", e.message);
-  }
+  console.log("==> PostgreSQL capo-db...");
+  await fetch(`${COOLIFY_URL}/api/v1/databases/${DB_UUID}/start`, { headers });
 
-  console.log("==> Deploy force...");
+  console.log("==> Deploy...");
   const dep = await api("GET", `/deploy?uuid=${APP_UUID}&force=true`);
   const deploymentUuid = dep.deployments?.[0]?.deployment_uuid;
-  console.log("   deployment_uuid:", deploymentUuid);
+  console.log("   uuid:", deploymentUuid);
 
   if (deploymentUuid) {
     await waitDeploy(deploymentUuid, APP_UUID);
   }
 
-  try {
-    const r = await fetch(APP_URL, { redirect: "follow" });
-    console.log("HTTP", APP_URL, "->", r.status);
-  } catch (e) {
-    console.log("HTTP check:", e.message);
-  }
-
-  console.log("\nTermine. URLs :");
-  console.log(" ", APP_URL);
-  console.log(" ", SSLIP_DOMAIN);
+  const r = await fetch(APP_URL, { redirect: "follow" });
+  console.log("HTTP", APP_URL, "->", r.status);
 }
 
 main().catch((e) => {

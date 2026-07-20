@@ -54,6 +54,24 @@ export const progressSchema = z.object({
   completed: z.boolean().optional(),
 });
 
+export const startConversationSchema = z.object({
+  courseId: z.string().min(1, "Cours requis"),
+  teacherUserId: z.string().min(1, "Professeur requis"),
+  message: z
+    .string()
+    .trim()
+    .min(1, "Message requis")
+    .max(2000, "Message trop long (max. 2000 caractères"),
+});
+
+export const sendMessageSchema = z.object({
+  body: z
+    .string()
+    .trim()
+    .min(1, "Message requis")
+    .max(2000, "Message trop long (max. 2000 caractères"),
+});
+
 const contentUrlSchema = z.union([
   z.string().url("URL invalide"),
   z.string().regex(/^\/uploads\/.+/, "Chemin de fichier invalide"),

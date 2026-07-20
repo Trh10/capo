@@ -19,6 +19,7 @@ export function MobileMenu({ user }: MobileMenuProps) {
     { href: "/courses", label: "Cours" },
     { href: "/teachers", label: "Professeurs" },
     ...(user ? [{ href: "/my-courses", label: "Mes cours" }] : []),
+    ...(user ? [{ href: "/messages", label: "Messages" }] : []),
     ...(user?.role === "TEACHER"
       ? [{ href: "/teacher", label: "Espace prof" }]
       : []),

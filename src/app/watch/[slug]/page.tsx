@@ -10,7 +10,7 @@ import {
 import { ContentViewer } from "@/components/video/ContentViewer";
 import { getContentTypeLabel, isVideoContent } from "@/lib/content-types";
 import { WatchLessonExtras } from "@/components/offline/WatchLessonExtras";
-
+import { ContactTeacherButton } from "@/components/messages/ContactTeacherButton";
 interface WatchPageProps {
   params: Promise<{ slug: string }>;
   searchParams: Promise<{ lesson?: string }>;
@@ -66,8 +66,11 @@ export default async function WatchPage({ params, searchParams }: WatchPageProps
     initialWatchedSec = progress?.watchedSec ?? 0;
   }
 
-  return (
-    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-10">
+  const teacherUser = course.teacher.user;
+  const teacherName = `${teacherUser.firstName} ${teacherUser.lastName}`;
+  const canContactTeacher = user?.id !== teacherUser.id;
+
+  return (    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-10">
       <p className="text-xs font-semibold uppercase tracking-[.14em] text-primary-deep">
         Lecture
       </p>
@@ -81,6 +84,10 @@ export default async function WatchPage({ params, searchParams }: WatchPageProps
             isVideoContent(currentLesson.contentType) ? maxWatchSeconds : null
           }
           courseSlug={course.slug}
+          courseId={course.id}
+          teacherUserId={teacherUser.id}
+          teacherName={teacherName}
+          isLoggedIn={Boolean(user)}
           posterUrl={course.thumbnailUrl}
           lessonId={currentLesson.id}
           initialWatchedSec={initialWatchedSec}
@@ -109,6 +116,25 @@ export default async function WatchPage({ params, searchParams }: WatchPageProps
             <p className="mt-2 text-sm text-primary-deep">
               Aperçu gratuit limité à 1 minute — achetez le cours pour voir la suite
             </p>
+          )}
+          {canContactTeacher && (
+            <div className="mt-4 flex flex-wrap items-center gap-3">
+              <ContactTeacherButton
+                courseId={course.id}
+                courseSlug={course.slug}
+                teacherUserId={teacherUser.id}
+                teacherName={teacherName}
+                isLoggedIn={Boolean(user)}
+              />
+              {!hasCourseAccess && (
+                <Link
+                  href={`/courses/${course.slug}`}
+                  className="text-sm font-semibold text-primary transition hover:text-primary-dark"
+                >
+                  Acheter le cours →
+                </Link>
+              )}
+            </div>
           )}
         </div>
 

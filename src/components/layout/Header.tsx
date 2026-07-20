@@ -37,6 +37,12 @@ export async function Header() {
                 >
                   Mes cours
                 </Link>
+                <Link
+                  href="/messages"
+                  className="text-sm font-medium text-foreground/80 transition hover:text-primary"
+                >
+                  Messages
+                </Link>
                 {user.role === "TEACHER" && (
                   <Link
                     href="/teacher"

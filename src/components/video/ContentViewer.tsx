@@ -10,6 +10,10 @@ interface ContentViewerProps {
   title: string;
   maxWatchSeconds?: number | null;
   courseSlug: string;
+  courseId?: string;
+  teacherUserId?: string;
+  teacherName?: string;
+  isLoggedIn?: boolean;
   posterUrl?: string | null;
   lessonId?: string;
   initialWatchedSec?: number;
@@ -21,6 +25,10 @@ export function ContentViewer({
   title,
   maxWatchSeconds = null,
   courseSlug,
+  courseId,
+  teacherUserId,
+  teacherName,
+  isLoggedIn = false,
   posterUrl,
   lessonId,
   initialWatchedSec = 0,
@@ -32,6 +40,10 @@ export function ContentViewer({
         title={title}
         maxWatchSeconds={maxWatchSeconds}
         courseSlug={courseSlug}
+        courseId={courseId}
+        teacherUserId={teacherUserId}
+        teacherName={teacherName}
+        isLoggedIn={isLoggedIn}
         posterUrl={posterUrl}
         lessonId={lessonId}
         initialWatchedSec={initialWatchedSec}

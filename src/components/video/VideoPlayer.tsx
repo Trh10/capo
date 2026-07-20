@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { ContactTeacherButton } from "@/components/messages/ContactTeacherButton";
 import { getOfflineBlobUrl, getOfflineLesson } from "@/lib/offline-storage";
 
 interface VideoPlayerProps {
@@ -9,6 +10,10 @@ interface VideoPlayerProps {
   title: string;
   maxWatchSeconds?: number | null;
   courseSlug: string;
+  courseId?: string;
+  teacherUserId?: string;
+  teacherName?: string;
+  isLoggedIn?: boolean;
   posterUrl?: string | null;
   lessonId?: string;
   initialWatchedSec?: number;
@@ -19,6 +24,10 @@ export function VideoPlayer({
   title,
   maxWatchSeconds = null,
   courseSlug,
+  courseId,
+  teacherUserId,
+  teacherName,
+  isLoggedIn = false,
   posterUrl,
   lessonId,
   initialWatchedSec = 0,
@@ -30,6 +39,9 @@ export function VideoPlayer({
   const [playbackUrl, setPlaybackUrl] = useState(videoUrl);
   const isPreview = maxWatchSeconds !== null && maxWatchSeconds > 0;
   const canSaveProgress = Boolean(lessonId) && !isPreview;
+  const canContactTeacher = Boolean(
+    courseId && teacherUserId && teacherName
+  );
 
   const saveProgress = useCallback(
     async (watchedSec: number) => {
@@ -151,16 +163,28 @@ export function VideoPlayer({
           <div className="pointer-events-none absolute left-4 top-4 rounded-md bg-black/70 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">
             Aperçu gratuit · 1 min
           </div>
-          <div className="absolute inset-x-0 bottom-12 flex items-center justify-between gap-3 px-4 sm:bottom-14">
+          <div className="absolute inset-x-0 bottom-12 flex flex-col gap-2 px-4 sm:bottom-14">
             <p className="pointer-events-none rounded-lg bg-black/75 px-3 py-2 text-xs text-white/90 backdrop-blur-sm sm:text-sm">
               Vous regardez un extrait. Achetez le cours pour voir la suite.
             </p>
-            <Link
-              href={`/courses/${courseSlug}`}
-              className="shrink-0 rounded-full bg-primary px-4 py-1.5 text-xs font-semibold text-white shadow-lg transition hover:bg-primary-dark sm:text-sm"
-            >
-              Acheter le cours
-            </Link>
+            <div className="flex flex-wrap items-center justify-end gap-2">
+              {canContactTeacher && (
+                <ContactTeacherButton
+                  courseId={courseId!}
+                  courseSlug={courseSlug}
+                  teacherUserId={teacherUserId!}
+                  teacherName={teacherName!}
+                  isLoggedIn={isLoggedIn}
+                  variant="overlay"
+                />
+              )}
+              <Link
+                href={`/courses/${courseSlug}`}
+                className="shrink-0 rounded-full bg-primary px-4 py-1.5 text-xs font-semibold text-white shadow-lg transition hover:bg-primary-dark sm:text-sm"
+              >
+                Acheter le cours
+              </Link>
+            </div>
           </div>
         </>
       )}
@@ -187,12 +211,24 @@ export function VideoPlayer({
             Votre aperçu gratuit est terminé. Achetez le cours pour débloquer
             toutes les leçons et continuer votre apprentissage.
           </p>
-          <Link
-            href={`/courses/${courseSlug}`}
-            className="mt-6 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-primary-dark"
-          >
-            Voir et acheter le cours
-          </Link>
+          <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row">
+            {canContactTeacher && (
+              <ContactTeacherButton
+                courseId={courseId!}
+                courseSlug={courseSlug}
+                teacherUserId={teacherUserId!}
+                teacherName={teacherName!}
+                isLoggedIn={isLoggedIn}
+                variant="overlay"
+              />
+            )}
+            <Link
+              href={`/courses/${courseSlug}`}
+              className="rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-primary-dark"
+            >
+              Voir et acheter le cours
+            </Link>
+          </div>
         </div>
       )}
     </div>
